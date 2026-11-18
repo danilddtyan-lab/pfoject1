@@ -1,67 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <!-- Кодировка и масштаб для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top climbers | Ala-archa nature park</title>
+  <meta name="description" content="Ала-Арча: природный парк в Кыргызстане. Маршруты, приюты и вершины, отметки восхождений и рейтинг альпинистов.">
+  <meta name="theme-color" content="#0C1B14">
+  <title>Рейтинг альпинистов | Природный парк Ала-Арча</title>
 
-  <!-- Шрифты Google -->
+  <!-- Значок вкладки (встроен в код, поэтому нет лишнего запроса favicon.ico) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+  <!-- Шрифты Google: Cormorant Garamond для заголовков, Manrope для текста (есть кириллица) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Файл стилей -->
+  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="top">
+  <!-- Ссылка для клавиатуры: сразу к содержимому -->
+  <a class="skip" href="#main">Перейти к содержимому</a>
+
   <div class="page">
+    <!-- Шапка и меню: заполняются скриптом app.js (одинаковые на всех страницах) -->
+    <header class="header" id="site-header"></header>
 
-    <!-- Верхняя панель: логотип и меню -->
-    <header class="header" id="site-header">
-      <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-      <nav class="nav" aria-label="Main">
-        <a class="nav__link" href="index.html">Home</a>
-        <a class="nav__link" href="gallery.html">Gallery</a>
-        <a class="nav__link" href="top.html" aria-current="page">Leaderboard</a>
-        <a class="nav__link" href="add-peak.html">Log a peak</a>
-      </nav>
-    </header>
-
-    <!-- Основное содержимое -->
-    <main class="wrap">
-
-      <!-- Заголовок страницы и вступление -->
+    <main class="wrap" id="main">
+      <!-- Заголовок страницы и правило подсчёта -->
       <div class="page-head">
-        <h1 class="title">Top climbers</h1>
-        <p class="lead">Points = peak height in hundreds of metres + 10 per difficulty level.</p>
+        <h1 class="title">Лучшие альпинисты</h1>
+        <p class="lead">Очки = высота вершины в сотнях метров + 10 за каждый уровень сложности.</p>
       </div>
 
-      <!-- Плашка с примером подсчёта очков -->
+      <!-- Пример подсчёта очков -->
       <div class="rules">
-        <div><b>40 pts</b><span>A 4,000 m peak</span></div>
-        <div><b>+ 20 pts</b><span>Difficulty level 2</span></div>
-        <div><b>= 60 pts</b><span>Added to your total</span></div>
+        <div><b>40 очков</b><span>Вершина высотой 4 000 м</span></div>
+        <div><b>+ 20 очков</b><span>Сложность 2</span></div>
+        <div><b>= 60 очков</b><span>Добавляется к вашей сумме</span></div>
       </div>
 
-      <!-- Список лидеров (заполняется скриптом app.js) -->
-      <ol class="board" id="board"></ol>
+      <!-- Список лидеров: app.js заменяет «Загрузка» на данные из базы -->
+      <ol class="board" id="board" aria-live="polite"><li class="empty">Загрузка рейтинга…</li></ol>
 
       <!-- Призыв добавить свою вершину -->
       <section class="cta">
         <div>
-          <h2>Not on the list yet?</h2>
-          <p>Log your first peak and take your place.</p>
+          <h2>Вас ещё нет в списке?</h2>
+          <p>Отметьте первую вершину и займите своё место.</p>
         </div>
-        <a class="btn" href="add-peak.html">Log a peak</a>
+        <a class="btn" href="add-peak.html">Отметить вершину</a>
       </section>
     </main>
 
-    <!-- Подвал -->
-    <footer class="footer" id="site-footer"><b>Ala-Archa</b>Nature park, Kyrgyzstan</footer>
+    <!-- Подвал: заполняется скриптом app.js -->
+    <footer class="footer" id="site-footer"></footer>
   </div>
 
-  <!-- Скрипт сайта -->
+  <!-- Общий скрипт: шапка, подвал, работа с базой и логика страницы -->
   <script src="app.js"></script>
 </body>
 </html>
