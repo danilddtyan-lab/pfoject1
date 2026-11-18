@@ -1,97 +1,95 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <!-- Кодировка и масштаб для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Ala-Archa nature park</title>
+  <meta name="description" content="Ала-Арча: природный парк в Кыргызстане. Маршруты, приюты и вершины, отметки восхождений и рейтинг альпинистов.">
+  <meta name="theme-color" content="#0C1B14">
+  <title>Главная | Природный парк Ала-Арча</title>
 
-  <!-- Шрифты Google (если не загрузятся, сработают запасные) -->
+  <!-- Значок вкладки (встроен в код, поэтому нет лишнего запроса favicon.ico) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+  <!-- Шрифты Google: Cormorant Garamond для заголовков, Manrope для текста (есть кириллица) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Файл стилей -->
+  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="home">
+  <!-- Ссылка для клавиатуры: сразу к содержимому -->
+  <a class="skip" href="#main">Перейти к содержимому</a>
+
   <div class="page">
+    <!-- Шапка и меню: заполняются скриптом app.js (одинаковые на всех страницах) -->
+    <header class="header" id="site-header"></header>
 
-    <!-- Верхняя панель: логотип и меню -->
-    <header class="header" id="site-header">
-      <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-      <nav class="nav" aria-label="Main">
-        <a class="nav__link" href="index.html" aria-current="page">Home</a>
-        <a class="nav__link" href="gallery.html">Gallery</a>
-        <a class="nav__link" href="top.html">Leaderboard</a>
-        <a class="nav__link" href="add-peak.html">Log a peak</a>
-      </nav>
-    </header>
-
-    <!-- Hero: фото задаётся в style.css, правило .hero -->
+    <!-- Главный экран: фон-фото задаётся в style.css (правило .hero) -->
     <section class="hero">
-      <h1>An entire world in a single gorge</h1>
-      <p>Routes, huts and summits of Ala-Archa. Log your ascents and see who is climbing the highest.</p>
-      <a class="btn" href="add-peak.html">Log a peak</a>
+      <h1>Целый мир в одном ущелье</h1>
+      <p>Маршруты, приюты и вершины Ала-Арчи. Отмечайте восхождения и смотрите, кто забирается выше всех.</p>
+      <a class="btn" href="add-peak.html">Отметить вершину</a>
 
       <!-- Полоса с ключевыми цифрами -->
       <div class="facts">
-        <div><b>4,895 m</b><span>Peak Semenov-Tian-Shansky</span></div>
-        <div><b>3,370 m</b><span>Ratsek Hut</span></div>
-        <div><b>30 km</b><span>From Bishkek</span></div>
-        <div><b>1976</b><span>Nature park founded</span></div>
+        <div><b>4 895 м</b><span>Пик Семёнова-Тян-Шанского</span></div>
+        <div><b>3 370 м</b><span>Приют Рацека</span></div>
+        <div><b>40 км</b><span>от Бишкека</span></div>
+        <div><b>1976</b><span>год основания парка</span></div>
       </div>
     </section>
 
     <!-- Основное содержимое -->
-    <main class="wrap">
-
+    <main class="wrap" id="main">
       <!-- Вступительная фраза -->
-      <p class="intro">Glaciers, alpine meadows and granite walls, a short drive from the capital and a world away from it.</p>
+      <p class="intro">Ледники, альпийские луга и гранитные стены: рядом со столицей и в то же время в другом мире.</p>
 
-      <!-- Заголовок раздела -->
-      <h2 class="title" id="routes">Where to go</h2>
+      <!-- Раздел «Куда пойти» -->
+      <h2 class="title" id="routes">Куда пойти</h2>
 
       <!-- Три карточки: первая большая, две поменьше -->
       <div class="cards">
-
         <!-- Карточка 1: приют Рацека -->
         <article class="card">
-          <img class="card__img" src="images/ratsek-hut.jpg" alt="Ratsek Hut">
-          <div><h3 class="card__title">Ratsek Hut</h3>
-          <p class="card__text">Elevation: 3,370 m. Rest in the mountains, with a warm bed, a hot meal, and the silence of the peaks outside your window.</p></div>
+          <img class="card__img" src="images/ratsek-hut.jpg" alt="Приют Рацека" loading="lazy" decoding="async">
+          <div><h3 class="card__title">Приют Рацека</h3>
+          <p class="card__text">Высота: 3 370 м. Отдых в горах: тёплая постель, горячая еда и тишина вершин за окном.</p></div>
         </article>
 
-        <!-- Карточка 2: вершины (фото korona-peak.jpg) -->
+        <!-- Карточка 2: вершины Ала-Арчи -->
         <article class="card">
-          <img class="card__img" src="images/korona-peak.jpg" alt="Peaks of Ala-Archa">
-          <div><h3 class="card__title">Peaks of Ala-Archa</h3>
-          <p class="card__text">Elevation: up to 4,870 m. Climb above the clouds, where the summits wait for you.</p></div>
+          <img class="card__img" src="images/korona-peak.jpg" alt="Вершины Ала-Арчи" loading="lazy" decoding="async">
+          <div><h3 class="card__title">Вершины Ала-Арчи</h3>
+          <p class="card__text">Высота: до 4 870 м. Поднимитесь выше облаков, где вас ждут вершины.</p></div>
         </article>
 
         <!-- Карточка 3: комфорт среди природы -->
         <article class="card">
-          <img class="card__img" src="images/ala-archa-6.jpg" alt="Comfort Meets the Wild">
-          <div><h3 class="card__title">Comfort Meets the Wild</h3>
-          <p class="card__text">A warm bed, a hot meal, and the silence of Ala-Archa outside your window.</p></div>
+          <img class="card__img" src="images/ala-archa-6.jpg" alt="Комфорт среди дикой природы" loading="lazy" decoding="async">
+          <div><h3 class="card__title">Комфорт среди дикой природы</h3>
+          <p class="card__text">Тёплая постель, горячая еда и тишина Ала-Арчи за окном.</p></div>
         </article>
       </div>
 
-      <!-- Тёмный блок с призывом -->
+      <!-- Блок с призывом добавить вершину -->
       <section class="cta">
         <div>
-          <h2>Reached a summit?</h2>
-          <p>Add it to your log and climb the leaderboard.</p>
+          <h2>Покорили вершину?</h2>
+          <p>Добавьте её в свой список и поднимитесь в рейтинге.</p>
         </div>
-        <a class="btn" href="add-peak.html">Log a peak</a>
+        <a class="btn" href="add-peak.html">Отметить вершину</a>
       </section>
     </main>
 
-    <!-- Подвал (app.js может заполнить его сам) -->
-    <footer class="footer" id="site-footer"><b>Ala-Archa</b>Nature park, Kyrgyzstan</footer>
+    <!-- Подвал: заполняется скриптом app.js -->
+    <footer class="footer" id="site-footer"></footer>
   </div>
 
-  <!-- Скрипт сайта -->
+  <!-- Общий скрипт: шапка, подвал, работа с базой и логика страницы -->
   <script src="app.js"></script>
 </body>
 </html>
