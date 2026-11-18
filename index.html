@@ -1,114 +1,168 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Freetour — Всё для байкпакинга</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Freetour — магазин снаряжения для байкпакинга и велопутешествий в Кыргызстане.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ala-archa nature park</title>
+  <style>
+    :root {
+      --bg: #FCFCFC;
+      --green-bg: #D5F2B8;
+      --green-border: #8BC34A;
+      --cream: #FFF5D6;
+      --dark-green: #2E4A12;
+      --text: #222;
+    }
 
-<link rel="stylesheet" href="style.css">
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-/*  Доп анимация карточек */
-.item {
-    transition: 0.4s;
-}
-.item:hover {
-    transform: translateY(-8px);
-}
+    body {
+      font-family: "Comic Sans MS", "Chalkboard SE", "Trebuchet MS", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
 
-</style>
+    .page {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--green-bg);
+      min-height: 100vh;
+    }
 
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--cream);
+      border: 3px solid var(--green-border);
+      border-radius: 12px;
+      margin: 8px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .logo small {
+      font-size: 12px;
+      font-weight: normal;
+      margin-left: 6px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    nav a {
+      background: var(--dark-green);
+      color: #fff;
+      text-decoration: none;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 16px;
+      transition: opacity 0.2s;
+    }
+
+    nav a:hover { opacity: 0.8; }
+
+    .slogan {
+      display: inline-block;
+      margin: 8px 16px 16px;
+      padding: 8px 16px;
+      background: var(--cream);
+      border: 3px solid var(--green-border);
+      border-radius: 10px;
+      font-size: 26px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      padding: 8px 16px 32px;
+    }
+
+    .card {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #ddd;
+    }
+
+    .card h2 {
+      font-size: 22px;
+      font-weight: normal;
+      line-height: 1.2;
+    }
+
+    .card p {
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    @media (max-width: 600px) {
+      .slogan { font-size: 20px; }
+      .card h2 { font-size: 19px; }
+      .card p { font-size: 17px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="page">
+    <header>
+      <div class="logo">Ala-archa <small>nature park</small></div>
+      <nav>
+        <a href="#hotel">hotel</a>
+        <a href="#routes">routes</a>
+        <a href="#live-cam">live-cam</a>
+      </nav>
+    </header>
 
-<header class="header-boxed">
+    <div class="slogan">An entire world in a single gorge...</div>
 
-<div class="header-left">
-    <div class="logo-container">
-        <a href="index.html">
-            <img src="Picsart_26-02-12_18-29-18-194.png" alt="Лого" class="logo-big">
-        </a>
-    </div>
+    <main class="cards">
+      <article class="card">
+        <img src="images/ratsek-hut.jpg" alt="Ratsek Hut">
+        <div>
+          <h2>Ratsek Hut</h2>
+          <p>Elevation: 3,370 m<br>
+          Rest in the mountains, with a warm bed, a hot meal, and the silence of the peaks outside your window.</p>
+        </div>
+      </article>
 
-    <div class="header-text">
-        <h1>Freetour</h1>
-        <p>все для байкпакинга</p>
-    </div>
-</div>
+      <article class="card">
+        <img src="images/peaks.jpg" alt="Peaks of Ala-Archa">
+        <div>
+          <h2>Peaks of Ala-Archa</h2>
+          <p>Elevation: up to 4,870 m<br>
+          Climb above the clouds, where the summits wait for you.</p>
+        </div>
+      </article>
 
-<nav class="nav">
-    <a href="index.html">Главная</a>
-    <a href="onas.html">О нас</a>
-    <a href="contacts.html" class="nav-btn">Контакты</a>
-
-    </button>
-</nav>
-
-</header>
-
-<main class="container">
-
-<section class="catalog">
-
-<!-- Rhinowalk Fork -->
-<article class="item">
-<img src="05_c33d7afc-b279-483c-8d2c-bdd36ae4d002.webp" alt="Сумка Rhinowalk на вилку">
-<div class="item-content">
-<h2 class="item-title">Сумка Rhinowalk на вилку</h2>
-<div class="item-price">2500 сом</div>
-<button class="item-button" onclick="addToCart('Rhinowalk Fork', 2500)">В корзину</button>
-<a href="rhinowalkfork.html" class="item-button">Подробнее</a>
-</div>
-</article>
-
-<!-- Rhinowalk Handlebar -->
-<article class="item">
-<img src="818j6v9XLTL.jpg" alt="Сумка Rhinowalk под руль">
-<div class="item-content">
-<h2 class="item-title">Сумка Rhinowalk под руль</h2>
-<div class="item-price">от 3000 сом</div>
-<button class="item-button" onclick="addToCart('Rhinowalk Handlebar', 2000)">В корзину</button>
-<a href="rhinowalkbar.html" class="item-button">Подробнее</a>
-</div>
-    
-</article>
-
-<!-- Apidura Fork -->
-<article class="item">
-<img src="apidura-apidura-expedition-fork-pack-3l.jpg" alt="Apidura Fork Pack">
-<div class="item-content">
-<h2 class="item-title">Apidura Fork Pack</h2>
-<div class="item-price">от 9800 сом</div>
-<button class="item-button" onclick="addToCart('Apidura Fork Pack', 9800)">В корзину</button>
-<a href="apidurafork.html" class="item-button">Подробнее</a>
-</div>
-    
-</article>
-
-<!-- Apidura Saddle -->
-<article class="item">
-<img src="tb_image_share_1770908212687.png" alt="Apidura Saddle Pack">
-<div class="item-content">
-<h2 class="item-title">Apidura Saddle Pack</h2>
-<div class="item-price">от 22000 сом</div>
-<button class="item-button" onclick="addToCart('Apidura Saddle Pack', 22000)">В корзину</button>
-<a href="apidurasaddle.html" class="item-button">Подробнее</a>
-</div>
-</article>
-
-</section>
-</main>
-
-<footer>
-© 2026 Freetour.kg
-</footer>
-
-<script>
-
-
-
-
+      <article class="card">
+        <img src="images/comfort-hotel.jpg" alt="Comfort Meets the Wild">
+        <div>
+          <h2>Comfort Meets the Wild</h2>
+          <p>Rest in the mountains, with a warm bed, a hot meal, and the silence of Ala-Archa outside your window.</p>
+        </div>
+      </article>
+    </main>
+  </div>
 </body>
 </html>
 
