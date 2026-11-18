@@ -1,41 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Кодировка и настройка масштаба для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Название вкладки браузера -->
   <title>Home | Ala-archa nature park</title>
+
+  <!-- Подключение файла стилей -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="home">
+  <!-- Общая обёртка страницы -->
   <div class="page">
-    <header class="header" id="site-header"></header>
+
+    <!-- Верхняя панель: логотип и кнопки меню -->
+    <header class="header" id="site-header">
+      <!-- Логотип, ведёт на главную -->
+      <a class="logo" href="index.html">Ala-Archa <small>nature park</small></a>
+
+      <!-- Меню навигации (aria-current отмечает текущую страницу) -->
+      <nav class="nav" aria-label="Main">
+        <a class="nav__link" href="index.html" aria-current="page">Home</a>
+        <a class="nav__link" href="gallery.html">Gallery</a>
+        <a class="nav__link" href="leaderboard.html">Leaderboard</a>
+        <a class="nav__link" href="add-peak.html">Log a peak</a>
+      </nav>
+    </header>
+
+    <!-- Основное содержимое страницы -->
     <main class="wrap">
+
+      <!-- Главный экран с фото на фоне (картинка задаётся в style.css, правило .hero) -->
       <section class="hero">
+        <!-- Главный заголовок -->
         <h1>An entire world in a single gorge...</h1>
+        <!-- Короткое описание сайта -->
         <p>Routes, huts and summits of Ala-Archa. Log your ascents and see who is climbing the highest.</p>
+        <!-- Кнопка перехода к добавлению вершины -->
         <a class="btn" href="add-peak.html">Log a peak</a>
       </section>
+
+      <!-- Заголовок раздела с карточками -->
       <h2 class="title" id="routes">Where to go</h2>
+
+      <!-- Сетка из трёх карточек -->
       <div class="cards">
+
+        <!-- Карточка 1: приют Рацека -->
         <article class="card">
           <img class="card__img" src="images/ratsek-hut.jpg" alt="Ratsek Hut">
           <div><h3 class="card__title">Ratsek Hut</h3>
           <p class="card__text">Elevation: 3,370 m<br>Rest in the mountains, with a warm bed, a hot meal, and the silence of the peaks outside your window.</p></div>
         </article>
+
+        <!-- Карточка 2: вершины Ала-Арчи (фото korona-peak.jpg) -->
         <article class="card">
           <img class="card__img" src="images/korona-peak.jpg" alt="Peaks of Ala-Archa">
           <div><h3 class="card__title">Peaks of Ala-Archa</h3>
           <p class="card__text">Elevation: up to 4,870 m<br>Climb above the clouds, where the summits wait for you.</p></div>
         </article>
+
+        <!-- Карточка 3: комфорт среди природы -->
         <article class="card">
           <img class="card__img" src="images/ala-archa-6.jpg" alt="Comfort Meets the Wild">
           <div><h3 class="card__title">Comfort Meets the Wild</h3>
           <p class="card__text">A warm bed, a hot meal, and the silence of Ala-Archa outside your window.</p></div>
         </article>
+
       </div>
     </main>
+
+    <!-- Подвал сайта (наполняется скриптом app.js) -->
     <footer class="footer" id="site-footer"></footer>
   </div>
+
+  <!-- Подключение скрипта сайта -->
   <script src="app.js"></script>
 </body>
 </html>
