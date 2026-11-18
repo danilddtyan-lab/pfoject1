@@ -1,196 +1,207 @@
-/* ===== 1. Настройки Supabase ===== */
+/* =====================================================================
+   app.js: общий скрипт сайта «Ала-Арча».
+   Подключается на каждой странице и делает три вещи:
+   1) рисует шапку и подвал (они одинаковые везде, поэтому лежат здесь);
+   2) общается с базой данных Supabase через её REST API;
+   3) запускает логику конкретной страницы по атрибуту <body data-page="...">.
+   ===================================================================== */
+
+/* ===== 1. Настройки ===== */
+// Адрес проекта Supabase и публичный (publishable) ключ. Публичный ключ безопасен в браузере,
+// если в базе включена защита строк (RLS). Секретный ключ (sb_secret_...) сюда вставлять нельзя.
 const CONFIG = {
   SUPABASE_URL: 'https://gbvmbvylnrbtatnrjdsl.supabase.co',
   SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
 };
 
-/* ===== 2. Общая шапка и подвал ===== */
+// Пункты меню: [значение data-page, адрес страницы, подпись]. По data-page подсвечивается текущая страница.
 const NAV = [
-  ['index.html', 'Home'],
-  ['gallery.html', 'Gallery'],
-  ['top.html', 'Leaderboard'],
-  ['add-peak.html', 'Log a peak']
+  ['home', 'index.html', 'Главная'],
+  ['gallery', 'gallery.html', 'Галерея'],
+  ['top', 'top.html', 'Рейтинг'],
+  ['add', 'add-peak.html', 'Отметить вершину']
 ];
 
-const here = location.pathname.split('/').pop() || 'index.html';
-const header = document.getElementById('site-header');
-const footer = document.getElementById('site-footer');
-
-if (header) {
-  header.innerHTML = `
-    <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-    <nav class="nav" aria-label="Main">
-      ${NAV.map(([href, title]) =>
-        `<a class="nav__link" href="${href}"${href === here ? ' aria-current="page"' : ''}>${title}</a>`
-      ).join('')}
-    </nav>`;
-}
-
-if (footer) {
-  footer.innerHTML = '<b>Ala-Archa</b>Nature park, Kyrgyzstan';
-}
-
-/* ===== 3. Работа с Supabase ===== */
-let sb = null;
-
-const ready = (async () => {
-  if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) {
-    throw new Error('SUPABASE_URL или SUPABASE_KEY не заданы.');
-  }
-
-  if (!window.supabase) {
-    await new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js';
-      script.onload = resolve;
-      script.onerror = () => reject(new Error('Не удалось загрузить Supabase client с CDN.'));
-      document.head.appendChild(script);
-    });
-  }
-
-  sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
-})();
-
-const store = {
-  async peaks() {
-    await ready;
-    const { data, error } = await sb
-      .from('peaks')
-      .select('*')
-      .order('height_m', { ascending: false });
-    if (error) throw error;
-    return data || [];
-  },
-
-  async ascents() {
-    await ready;
-    const { data, error } = await sb
-      .from('ascents')
-      .select('*, peaks(name,height_m,difficulty)');
-    if (error) throw error;
-    return data || [];
-  },
-
-  async addAscent(ascent) {
-    await ready;
-    const { error } = await sb.from('ascents').insert(ascent);
-    if (error) throw error;
-  }
-};
-
-const points = peak => {
-  const height = Number(peak.height_m) || 0;
-  const difficulty = Number(peak.difficulty) || 0;
-  return Math.round(height / 100) + difficulty * 10;
-};
-
-const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-}[char]));
-
-/* ===== 4. Логика страниц ===== */
+// Имя текущей страницы берём из <body data-page="...">; от него зависит, какая логика ниже запустится.
 const page = document.body.dataset.page;
 
-if (page === 'top') {
-  const list = document.getElementById('board');
+/* ===== 2. Шапка и подвал ===== */
+// Вставляем логотип и меню; у текущей страницы ставим aria-current (стиль подсветки и подсказка для экранных читалок).
+const header = document.getElementById('site-header');
+if (header) {
+  header.innerHTML = `
+    <a class="logo" href="index.html">Ала-Арча <small>ПРИРОДНЫЙ ПАРК</small></a>
+    <nav class="nav" aria-label="Главное меню">
+      ${NAV.map(([key, href, title]) =>
+        `<a class="nav__link" href="${href}"${key === page ? ' aria-current="page"' : ''}>${title}</a>`).join('')}
+    </nav>`;
+}
+const footer = document.getElementById('site-footer');
+if (footer) footer.innerHTML = '<b>Ала-Арча</b>Природный парк, Кыргызстан';
 
-  if (list) {
-    store.ascents().then(rows => {
-      const climbers = {};
+/* ===== 3. Вспомогательные функции ===== */
+// Экранирует спецсимволы, чтобы текст из базы не превратился в HTML-код (защита от XSS).
+const esc = value => String(value ?? '').replace(/[&<>"']/g,
+  ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-      rows.forEach(row => {
-        if (!row.climber_name || !row.peaks) return;
+// Правильная форма слова по числу: plural(5, ['очко', 'очка', 'очков']) → «очков».
+const plural = (n, [one, few, many]) => {
+  const m = Math.abs(n) % 100, d = m % 10;
+  return m > 10 && m < 20 ? many : d === 1 ? one : d > 1 && d < 5 ? few : many;
+};
 
-        const name = String(row.climber_name).trim();
-        if (!name) return;
+// Очки за вершину: высота в сотнях метров + 10 за каждый уровень сложности.
+const points = peak => Math.round((Number(peak.height_m) || 0) / 100) + (Number(peak.difficulty) || 0) * 10;
 
-        const key = name.toLowerCase();
-        const climber = climbers[key] ||= { name, n: 0, max: 0, pts: 0 };
-        const height = Number(row.peaks.height_m) || 0;
+// Число с пробелом между тысячами: 4895 → «4 895».
+const fmt = n => Number(n).toLocaleString('ru-RU');
 
-        climber.n++;
-        climber.max = Math.max(climber.max, height);
-        climber.pts += points(row.peaks);
-      });
-
-      const top = Object.values(climbers)
-        .sort((a, b) => b.pts - a.pts || b.max - a.max || a.name.localeCompare(b.name));
-
-      list.innerHTML = top.length
-        ? top.map((climber, index) => `
-            <li>
-              <span class="rank">${index + 1}</span>
-              <span>${esc(climber.name)}<small>${climber.n} ascents, highest ${climber.max} m</small></span>
-              <span class="pts">${climber.pts} pts</span>
-            </li>`).join('')
-        : '<li class="empty">No ascents yet. <a href="add-peak.html">Log the first one.</a></li>';
-    }).catch(error => {
-      console.error('Ошибка загрузки таблицы лидеров из Supabase:', error);
-      list.innerHTML = '<li class="empty">Не удалось загрузить данные. Проверьте подключение и политики доступа Supabase.</li>';
+/* ===== 4. Работа с базой данных (REST API Supabase) ===== */
+// Универсальный запрос к таблице. Без внешних библиотек: меньше кода и быстрее загрузка.
+// path: «таблица?параметры»; options: метод и тело. Через 10 секунд запрос прерывается.
+async function api(path, options = {}) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 10000);
+  try {
+    const res = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${path}`, {
+      ...options,
+      signal: ctrl.signal,
+      headers: { apikey: CONFIG.SUPABASE_KEY, 'Content-Type': 'application/json', ...options.headers }
     });
+    const text = await res.text();                       // при вставке тело ответа пустое, поэтому не res.json()
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) throw new Error(`Supabase ${res.status}: ${data?.message || res.statusText}`);
+    return data;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-if (page === 'add') {
-  const form = document.getElementById('ascent-form');
-  const msg = document.getElementById('msg');
+// Три операции, которые нужны сайту.
+const store = {
+  // Вершины от самой высокой к низкой (для выпадающего списка).
+  peaks: () => api('peaks?select=id,name,height_m,difficulty&order=height_m.desc'),
+  // Восхождения вместе с данными вершины (имя участника + высота и сложность для подсчёта очков).
+  ascents: () => api('ascents?select=climber_name,peaks(height_m,difficulty)'),
+  // Новое восхождение; return=minimal говорит базе не присылать запись обратно.
+  addAscent: ascent => api('ascents', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(ascent) })
+};
 
-  if (form && msg) {
-    const nameInput = form.elements.name;
-    const peakSelect = form.elements.peak;
-    const dateInput = form.elements.date;
+/* ===== 5. Страница «Галерея» ===== */
+if (page === 'gallery') {
+  const dlg = document.getElementById('viewer');
+  const big = dlg.querySelector('img');
+  const caption = dlg.querySelector('p');
 
-    if (dateInput) {
-      const today = new Date();
-      const localToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-      dateInput.max = localToday;
-      dateInput.value = localToday;
-    }
+  document.querySelectorAll('.ph').forEach(btn => {
+    const img = btn.querySelector('img');
+    // Если файла фото нет, показываем нейтральную плитку и отключаем кнопку.
+    const markMissing = () => { btn.classList.add('ph--missing'); btn.disabled = true; };
+    img.addEventListener('error', markMissing);
+    if (img.complete && img.naturalWidth === 0) markMissing();   // ошибка могла случиться до подключения скрипта
 
-    store.peaks().then(peaks => {
-      peakSelect.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
-        peaks.map(peak =>
-          `<option value="${Number(peak.id)}">${esc(peak.name)}, ${esc(peak.height_m)} m</option>`
-        ).join('');
+    // Клик по фото открывает его крупно во всплывающем окне.
+    btn.addEventListener('click', () => {
+      big.src = img.currentSrc || img.src;
+      big.alt = img.alt;
+      caption.textContent = img.alt;
+      dlg.showModal();
+    });
+  });
 
-      peakSelect.disabled = peaks.length === 0;
-    }).catch(error => {
-      console.error('Ошибка загрузки пиков из Supabase:', error);
-      peakSelect.innerHTML = '<option value="" disabled selected>Ошибка загрузки пиков</option>';
-      peakSelect.disabled = true;
+  // Закрываем окно по кнопке «Закрыть» или по клику на тёмный фон (Esc работает сам).
+  dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('.btn')) dlg.close(); });
+}
+
+/* ===== 6. Страница «Рейтинг» ===== */
+if (page === 'top') {
+  const list = document.getElementById('board');
+  const showMessage = html => { list.innerHTML = `<li class="empty">${html}</li>`; };
+
+  store.ascents().then(rows => {
+    // Группируем восхождения по имени участника (без учёта регистра и пробелов по краям).
+    const climbers = {};
+    rows.forEach(row => {
+      const name = String(row.climber_name ?? '').trim();
+      if (!name || !row.peaks) return;                    // пропускаем записи без имени или без вершины
+      const c = climbers[name.toLowerCase()] ||= { name, n: 0, max: 0, pts: 0 };
+      c.n++;
+      c.max = Math.max(c.max, Number(row.peaks.height_m) || 0);
+      c.pts += points(row.peaks);
     });
 
-    form.onsubmit = async event => {
-      event.preventDefault();
+    // Сортировка: больше очков выше; при равенстве выше тот, кто был на более высокой вершине; затем по алфавиту.
+    const top = Object.values(climbers).sort((a, b) => b.pts - a.pts || b.max - a.max || a.name.localeCompare(b.name, 'ru'));
 
-      if (!form.reportValidity()) return;
+    if (!top.length) return showMessage('Пока нет ни одного восхождения. <a href="add-peak.html">Добавьте первое.</a>');
+    list.innerHTML = top.map((c, i) => `
+      <li>
+        <span class="rank">${i + 1}</span>
+        <span>${esc(c.name)}<small>${c.n} ${plural(c.n, ['восхождение', 'восхождения', 'восхождений'])}, максимум ${fmt(c.max)} м</small></span>
+        <span class="pts">${c.pts}<small>${plural(c.pts, ['очко', 'очка', 'очков'])}</small></span>
+      </li>`).join('');
+  }).catch(err => {
+    console.error('Ошибка загрузки рейтинга:', err);        // подробности для разработчика
+    showMessage('Не удалось загрузить рейтинг. Обновите страницу или попробуйте позже.');
+  });
+}
 
-      const peakId = Number(peakSelect.value);
-      if (!Number.isFinite(peakId) || peakId <= 0) {
-        msg.className = 'msg err';
-        msg.textContent = 'Выберите пик из списка.';
-        return;
-      }
+/* ===== 7. Страница «Отметить вершину» ===== */
+if (page === 'add') {
+  const form = document.getElementById('ascent-form');
+  const nameInput = document.getElementById('climber-name');
+  const peakSelect = document.getElementById('peak-select');
+  const dateInput = document.getElementById('climb-date');
+  const noteInput = document.getElementById('climb-note');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const msg = document.getElementById('msg');
 
-      msg.className = 'msg';
-      msg.textContent = 'Saving...';
+  // Сообщение под формой: isError = true делает текст красным.
+  const say = (text, isError = false) => { msg.className = isError ? 'msg err' : 'msg'; msg.innerHTML = text; };
 
-      try {
-        await store.addAscent({
-          climber_name: nameInput.value.trim(),
-          peak_id: peakId,
-          climbed_on: dateInput.value,
-          note: form.elements.note.value.trim() || null
-        });
+  // Сегодняшняя дата по местному времени (toISOString дал бы дату по UTC, иногда «вчерашнюю»).
+  const d = new Date();
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  dateInput.max = today;                                   // будущие даты выбрать нельзя
+  dateInput.value = today;
 
-        msg.innerHTML = 'Ascent saved. <a href="top.html">See the leaderboard</a>';
-        form.reset();
-        if (dateInput) dateInput.value = dateInput.max;
-      } catch (error) {
-        console.error('Ошибка сохранения восхождения в Supabase:', error);
-        msg.className = 'msg err';
-        msg.textContent = 'Не удалось сохранить. Проверьте таблицы и политики доступа Supabase.';
-      }
-    };
-  }
+  // Заполняем список вершин из базы.
+  store.peaks().then(peaks => {
+    if (!peaks.length) { peakSelect.innerHTML = '<option value="" disabled selected>Список вершин пуст</option>'; return; }
+    peakSelect.innerHTML = '<option value="" disabled selected>Выберите вершину</option>' +
+      peaks.map(p => `<option value="${Number(p.id)}">${esc(p.name)}, ${fmt(p.height_m)} м</option>`).join('');
+    peakSelect.disabled = false;
+  }).catch(err => {
+    console.error('Ошибка загрузки вершин:', err);
+    peakSelect.innerHTML = '<option value="" disabled selected>Не удалось загрузить вершины</option>';
+    say('Не удалось загрузить список вершин. Обновите страницу или попробуйте позже.', true);
+  });
+
+  // Отправка формы: проверяем данные, сохраняем в базу, сообщаем результат.
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    if (name.length < 2) return say('Введите имя (не короче 2 символов).', true);
+    if (!peakSelect.value) return say('Выберите вершину из списка.', true);
+    if (!dateInput.value || dateInput.value > today) return say('Укажите дату восхождения, не позже сегодняшней.', true);
+
+    submitBtn.disabled = true;                             // защита от двойной отправки
+    say('Сохраняем…');
+    try {
+      await store.addAscent({
+        climber_name: name,
+        peak_id: Number(peakSelect.value),
+        climbed_on: dateInput.value,
+        note: noteInput.value.trim() || null
+      });
+      form.reset();
+      dateInput.value = today;                             // reset() очищает дату, возвращаем сегодняшнюю
+      say('Восхождение сохранено. <a href="top.html">Посмотреть рейтинг</a>');
+    } catch (err) {
+      console.error('Ошибка сохранения восхождения:', err);
+      say('Не удалось сохранить. Попробуйте ещё раз чуть позже.', true);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
 }
