@@ -1,5 +1,5 @@
 /* ===== 1. Settings. Leave empty to run in demo mode (data stays in this browser). ===== */
-const CONFIG = { SUPABASE_URL: 'https://xxxx.supabase.co', SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC' };
+const CONFIG = { SUPABASE_URL: '', SUPABASE_KEY: '' };
 /* ===== 2. Shared header + footer ===== */
 const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Top climbers'], ['add-peak.html', 'Log a peak']];
 const here = location.pathname.split('/').pop() || 'index.html';
@@ -97,7 +97,12 @@ if (page === 'top') {
 if (page === 'add') {
   const f = document.getElementById('ascent-form'), msg = document.getElementById('msg');
   f.date.max = f.date.value = new Date().toISOString().slice(0, 10);
-  store.peaks().then(ps => f.peak.innerHTML = ps.map(p => `<option value="${p.id}">${esc(p.name)}, ${p.height_m} m</option>`).join(''));
+  store.peaks().then(ps => {
+    f.peak.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
+      ps.map(p => `<option value="${p.id}" data-height-m="${p.height_m}">${esc(p.name)}, ${p.height_m} m</option>`).join('');
+  }).catch(() => {
+    f.peak.innerHTML = '<option value="" disabled selected>Could not load peaks</option>';
+  });
   f.onsubmit = async e => {
     e.preventDefault(); msg.className = 'msg'; msg.textContent = 'Saving...';
     try {
