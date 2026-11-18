@@ -1,159 +1,154 @@
-/* ===== Цветовая палитра и шрифт (меняй цвета только здесь) ===== */
-:root{--bg:#7A6AA8;--green-bg:#F1ECF8;--green-border:#B9A8DE;--cream:#FFFCF7;--dark-green:#6A5A98;--accent:#CFEBDD;--text:#2E2A3B;--font:"Agrave Pro",Georgia,serif}
+/* ===== Палитра и шрифты: меняй цвета только здесь ===== */
+:root{
+  --spruce:#0C1B14;      /* самый тёмный зелёный (фон шапки, подвал) */
+  --forest:#17362A;      /* глубокий лесной */
+  --moss:#4F7352;        /* мох, основной акцент */
+  --sage:#A9C0A0;        /* шалфей, линии и рамки */
+  --lichen:#E3EBD9;      /* светлый лишайник, фон секций */
+  --mist:#F5F8F1;        /* почти белый, фон страницы */
+  --brass:#C2A55A;       /* тонкий латунный акцент для «дорогого» вида */
+  --text:#16241C;
+  --serif:"Cormorant Garamond","Playfair Display",Georgia,serif;
+  --sans:"Manrope","Helvetica Neue",Arial,sans-serif;
+  --r:22px;
+}
 
-/* ===== Общий сброс отступов и расчёт размеров ===== */
+/* ===== Сброс отступов ===== */
 *{box-sizing:border-box;margin:0;padding:0}
-
-/* ===== Плавная прокрутка по якорям ===== */
 html{scroll-behavior:smooth}
 
-/* ===== Основной фон и шрифт страницы ===== */
-body{font-family:var(--font);color:var(--text);background:var(--green-bg);min-height:100svh}
-
-/* ===== Картинки не вылезают за границы блока ===== */
+/* ===== Основа страницы ===== */
+body{font-family:var(--sans);color:var(--text);background:var(--mist);min-height:100svh;line-height:1.6;-webkit-font-smoothing:antialiased}
 img{display:block;max-width:100%}
-
-/* ===== Ссылки наследуют цвет текста ===== */
 a{color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 
-/* ===== Рамка при навигации с клавиатуры (доступность) ===== */
-:focus-visible{outline:3px solid var(--dark-green);outline-offset:2px}
-
-/* ===== Каркас страницы: шапка сверху, контент, подвал внизу ===== */
+/* ===== Каркас: шапка, контент, подвал ===== */
 .page{min-height:100svh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:1480px;margin:0 auto;padding:0 clamp(14px,3vw,48px)}
+main{flex:1;padding-bottom:clamp(48px,8vw,110px)}
 
-/* ===== Контейнер содержимого: на всю ширину, но не более 1600px ===== */
-.wrap{width:100%;max-width:1600px;margin:0 auto;padding:0 clamp(12px,3vw,48px)}
+/* ===== Шапка: тёмное «стекло», висит поверх страницы ===== */
+.header{position:sticky;top:12px;z-index:20;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:12px clamp(10px,2.5vw,36px) 0;padding:10px 12px 10px 24px;background:rgba(12,27,20,.72);-webkit-backdrop-filter:blur(16px) saturate(1.3);backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(169,192,160,.28);border-radius:999px;color:var(--mist)}
 
-/* ===== Главная область занимает всё свободное место ===== */
-main{flex:1;padding-bottom:40px}
+/* ===== Логотип ===== */
+.logo{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1}
+.logo small{margin-left:10px;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:.14em;color:var(--sage)}
 
-/* ===== Верхняя панель (шапка): остаётся на экране при прокрутке ===== */
-.header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:8px clamp(8px,2vw,24px);padding:12px 18px;background:var(--cream);border:3px solid var(--green-border);border-radius:12px;box-shadow:0 4px 14px rgba(106,90,152,.12)}
+/* ===== Меню ===== */
+.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav__link{padding:9px 20px;border-radius:999px;font-size:15px;font-weight:500;text-decoration:none;color:var(--lichen);transition:background .25s,color .25s}
+.nav__link:hover{background:rgba(227,235,217,.14)}
+.nav__link[aria-current="page"]{background:var(--lichen);color:var(--forest)}
 
-/* ===== Логотип в шапке ===== */
-.logo{font-size:28px;font-weight:bold;text-decoration:none;color:var(--dark-green)}
+/* ===== Главный экран: фото на всю ширину, тёмный градиент для читаемости ===== */
+.hero{position:relative;min-height:calc(100svh - 24px);margin-top:-84px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:26px;padding:clamp(24px,5vw,72px);padding-top:140px;border-radius:0 0 40px 40px;color:var(--mist);overflow:hidden;background:linear-gradient(180deg,rgba(12,27,20,.55) 0%,rgba(12,27,20,.05) 35%,rgba(12,27,20,.88) 100%),url("images/DJI_20260820125255_0337_D.jpg") center/cover no-repeat var(--forest)}
 
-/* ===== Маленькая надпись рядом с логотипом ===== */
-.logo small{margin-left:6px;font-size:12px;font-weight:normal;color:var(--text)}
+/* ===== Заголовок hero: крупный курсивный серif ===== */
+.hero h1{max-width:15ch;font-family:var(--serif);font-size:clamp(46px,9vw,136px);font-weight:500;font-style:italic;line-height:.95;letter-spacing:-.02em}
 
-/* ===== Блок с кнопками меню ===== */
-.nav{display:flex;flex-wrap:wrap;gap:8px}
+/* ===== Подзаголовок hero ===== */
+.hero p{max-width:46ch;font-size:clamp(16px,1.6vw,20px);color:var(--lichen)}
 
-/* ===== Кнопка меню ===== */
-.nav__link{padding:6px 16px;border-radius:20px;background:var(--dark-green);color:#fff;font-size:16px;text-decoration:none;transition:opacity .2s}
+/* ===== Единственная анимация на странице: плавное появление hero ===== */
+.hero>*{animation:rise 1s cubic-bezier(.2,.7,.2,1) both}
+.hero>:nth-child(2){animation-delay:.15s}
+.hero>:nth-child(3){animation-delay:.3s}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}}
 
-/* ===== Кнопка меню при наведении ===== */
-.nav__link:hover{opacity:.85}
+/* ===== Основная кнопка (латунь) ===== */
+.btn{display:inline-block;padding:15px 34px;border-radius:999px;background:var(--brass);color:var(--spruce);font:inherit;font-size:16px;font-weight:700;text-decoration:none;border:0;cursor:pointer;transition:background .25s,transform .25s}
+.btn:hover{background:#d6bb73;transform:translateY(-2px)}
 
-/* ===== Активная (текущая) страница в меню ===== */
-.nav__link[aria-current="page"]{background:var(--accent);color:var(--dark-green)}
+/* ===== Полоса с цифрами внизу hero (стекло) ===== */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin-top:18px;background:rgba(245,248,241,.08);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(227,235,217,.22);border-radius:var(--r)}
+.facts div{padding:20px 26px;border-left:1px solid rgba(227,235,217,.18)}
+.facts div:first-child{border-left:0}
+.facts b{display:block;font-family:var(--serif);font-size:clamp(28px,3.4vw,46px);font-weight:500;line-height:1.1}
+.facts span{font-size:14px;color:var(--sage)}
 
-/* ===== Главный экран (hero): фото на фоне + затемнение снизу для читаемости текста.
-   Картинка меняется в url(...) в конце строки ===== */
-.hero{min-height:calc(100svh - 110px);display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:20px;padding:clamp(20px,5vw,64px);border-radius:16px;color:#fff;background:linear-gradient(to top,rgba(60,45,95,.75),rgba(60,45,95,.05) 60%),url("images/images.jpg") center/cover no-repeat var(--dark-green)}
+/* ===== Вступительный абзац под hero ===== */
+.intro{max-width:980px;margin:clamp(56px,9vw,130px) auto;text-align:center;font-family:var(--serif);font-size:clamp(26px,3.6vw,48px);line-height:1.25;color:var(--forest)}
 
-/* ===== Крупный заголовок на главном экране ===== */
-.hero h1{max-width:18ch;font-size:clamp(34px,7vw,92px);line-height:1.05;font-weight:normal;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+/* ===== Заголовок раздела с тонкой линией ===== */
+.title{display:flex;align-items:center;gap:22px;margin:0 0 28px;font-family:var(--serif);font-size:clamp(34px,4.4vw,60px);font-weight:500;color:var(--forest)}
+.title::after{content:"";flex:1;height:1px;background:var(--sage)}
 
-/* ===== Подзаголовок на главном экране ===== */
-.hero p{max-width:50ch;font-size:clamp(18px,2vw,24px);text-shadow:0 1px 8px rgba(0,0,0,.35)}
+/* ===== Сетка карточек: первая — большая, слева на две строки ===== */
+.cards{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:20px}
+.card:first-child{grid-row:span 2}
 
-/* ===== Кнопка-ссылка (например, «Log a peak») ===== */
-.btn{display:inline-block;padding:10px 24px;border:3px solid var(--green-border);border-radius:24px;background:var(--cream);color:var(--dark-green);font:inherit;font-size:18px;text-decoration:none;cursor:pointer}
+/* ===== Карточка: фото на весь фон, текст поверх ===== */
+.card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:360px;border-radius:var(--r);overflow:hidden;color:var(--mist);isolation:isolate}
+.card:first-child{min-height:740px}
 
-/* ===== Кнопка при наведении ===== */
-.btn:hover{background:var(--accent)}
+/* ===== Фото карточки: плавно приближается при наведении ===== */
+.card__img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.card:hover .card__img{transform:scale(1.05)}
 
-/* ===== Заголовок раздела («Where to go») ===== */
-.title{margin:28px 0 16px;padding:8px 16px;display:inline-block;background:var(--cream);border:3px solid var(--green-border);border-radius:10px;font-size:clamp(22px,3vw,34px);font-weight:normal;color:var(--dark-green)}
+/* ===== Затемнение под текстом карточки ===== */
+.card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 35%,rgba(12,27,20,.9))}
 
-/* ===== Сетка карточек: колонки подстраиваются под ширину экрана ===== */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+/* ===== Текстовый блок карточки ===== */
+.card>div{padding:clamp(20px,2.6vw,36px)}
+.card__title{font-family:var(--serif);font-size:clamp(28px,3vw,42px);font-weight:500;line-height:1.05;margin-bottom:8px}
+.card__text{max-width:44ch;font-size:15px;color:var(--lichen)}
 
-/* ===== Одна карточка ===== */
-.card{display:flex;flex-direction:column;gap:12px;padding:12px;background:var(--cream);border-radius:12px;box-shadow:0 2px 10px rgba(106,90,152,.1)}
+/* ===== Тёмная полоса призыва к действию ===== */
+.cta{margin:clamp(56px,8vw,110px) 0 0;padding:clamp(36px,6vw,88px);border-radius:32px;background:radial-gradient(120% 140% at 85% 0%,#25523d 0%,var(--forest) 45%,var(--spruce) 100%);color:var(--mist);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:28px}
+.cta h2{max-width:16ch;font-family:var(--serif);font-size:clamp(36px,5vw,68px);font-weight:500;font-style:italic;line-height:1}
+.cta p{max-width:38ch;margin-top:14px;color:var(--sage)}
 
-/* ===== Фото в карточке (пропорции 4:3, обрезается по рамке) ===== */
-.card__img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#e4def0}
+/* ===== Галерея: мозаика в 3 колонки ===== */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.filters button{padding:9px 22px;border:1px solid var(--sage);border-radius:999px;background:transparent;color:var(--forest);font:inherit;font-size:15px;cursor:pointer;transition:background .2s}
+.filters button:hover{background:var(--lichen)}
+.filters button[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:var(--mist)}
+.gallery{columns:3 280px;column-gap:14px}
+.gallery button{display:block;width:100%;margin:0 0 14px;padding:0;border:0;border-radius:18px;overflow:hidden;cursor:zoom-in;background:var(--lichen)}
+.gallery img{width:100%;height:auto;transition:transform .8s}
+.gallery button:hover img{transform:scale(1.04)}
 
-/* ===== Название карточки ===== */
-.card__title{font-size:22px;font-weight:normal;line-height:1.2;color:var(--dark-green)}
+/* ===== Окно просмотра фото ===== */
+dialog{margin:auto;max-width:min(94vw,1200px);border:0;border-radius:24px;background:var(--mist);padding:14px}
+dialog::backdrop{background:rgba(12,27,20,.86);backdrop-filter:blur(4px)}
+dialog img{max-height:78svh;margin:0 auto;border-radius:14px}
+dialog p{margin:12px 6px 4px;font-family:var(--serif);font-size:22px}
 
-/* ===== Текст карточки ===== */
-.card__text{font-size:20px;line-height:1.3}
-
-/* ===== Галерея: панель кнопок-фильтров ===== */
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-
-/* ===== Кнопка фильтра ===== */
-.filters button{padding:6px 16px;border:2px solid var(--dark-green);border-radius:20px;background:transparent;color:var(--dark-green);font:inherit;font-size:16px;cursor:pointer}
-
-/* ===== Выбранный фильтр ===== */
-.filters button[aria-pressed="true"]{background:var(--dark-green);color:#fff}
-
-/* ===== Галерея: фото в 3 колонки (мозаика) ===== */
-.gallery{columns:3 280px;column-gap:12px}
-
-/* ===== Кнопка-обёртка вокруг фото в галерее ===== */
-.gallery button{display:block;width:100%;margin:0 0 12px;padding:0;border:0;border-radius:10px;overflow:hidden;cursor:zoom-in;background:var(--cream)}
-
-/* ===== Фото в галерее ===== */
-.gallery img{width:100%;height:auto}
-
-/* ===== Всплывающее окно для просмотра фото ===== */
-dialog{margin:auto;max-width:min(94vw,1200px);border:3px solid var(--green-border);border-radius:12px;background:var(--cream);padding:12px}
-
-/* ===== Затемнение фона за всплывающим окном ===== */
-dialog::backdrop{background:rgba(46,38,70,.75)}
-
-/* ===== Большое фото во всплывающем окне ===== */
-dialog img{max-height:78svh;margin:0 auto;border-radius:8px}
-
-/* ===== Подпись к фото во всплывающем окне ===== */
-dialog p{margin:10px 0;font-size:20px}
-
-/* ===== Таблица лидеров: список без маркеров ===== */
+/* ===== Таблица лидеров ===== */
 .board{list-style:none;display:grid;gap:10px}
+.board li{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:14px;padding:16px 24px;background:#fff;border:1px solid var(--lichen);border-radius:18px;font-size:18px}
+.board .rank{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--moss)}
+.board li:nth-child(-n+3){background:var(--forest);border-color:var(--forest);color:var(--mist)}
+.board li:nth-child(-n+3) .rank{color:var(--brass)}
+.board small{display:block;font-size:14px;opacity:.7}
+.board .pts{font-family:var(--serif);font-size:32px;font-weight:600;text-align:right}
 
-/* ===== Строка рейтинга: место, имя, очки ===== */
-.board li{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;padding:12px 16px;background:var(--cream);border-radius:12px;font-size:20px}
-
-/* ===== Номер места ===== */
-.board .rank{font-size:28px;font-weight:bold;color:var(--dark-green)}
-
-/* ===== Первые три места выделены рамкой ===== */
-.board li:nth-child(-n+3){border:3px solid var(--green-border);background:#FBF8FF}
-
-/* ===== Мелкая подпись под именем ===== */
-.board small{display:block;font-size:15px;opacity:.75}
-
-/* ===== Очки справа ===== */
-.board .pts{font-size:26px;font-weight:bold;text-align:right}
-
-/* ===== Форма добавления вершины: контейнер ===== */
-.form{display:grid;gap:14px;max-width:640px;padding:20px;background:var(--cream);border:3px solid var(--green-border);border-radius:12px}
-
-/* ===== Подпись поля формы ===== */
-.form label{display:grid;gap:4px;font-size:18px}
-
-/* ===== Поля ввода, списки и текстовые области ===== */
-.form input,.form select,.form textarea{padding:10px;border:2px solid var(--green-border);border-radius:8px;background:#fff;font:inherit;font-size:18px}
-
-/* ===== Сообщение под формой (успех или ошибка) ===== */
-.msg{min-height:1.4em;font-size:18px}
-
-/* ===== Сообщение об ошибке красным цветом ===== */
+/* ===== Форма добавления вершины ===== */
+.form{display:grid;gap:16px;max-width:660px;padding:clamp(22px,4vw,40px);background:#fff;border:1px solid var(--lichen);border-radius:var(--r);box-shadow:0 30px 60px -30px rgba(12,27,20,.25)}
+.form label{display:grid;gap:6px;font-size:15px;font-weight:600;color:var(--forest)}
+.form input,.form select,.form textarea{padding:13px 16px;border:1px solid var(--sage);border-radius:12px;background:var(--mist);font:inherit;font-size:16px;font-weight:400}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--moss);border-color:transparent}
+.msg{min-height:1.4em;font-size:16px;color:var(--moss)}
 .msg.err{color:#a3200f}
+.empty{padding:28px;background:var(--lichen);border-radius:var(--r);font-size:18px}
 
-/* ===== Блок «ничего не найдено» ===== */
-.empty{padding:20px;background:var(--cream);border-radius:12px;font-size:20px}
+/* ===== Подвал ===== */
+.footer{padding:44px 20px;text-align:center;font-size:14px;letter-spacing:.04em;background:var(--spruce);color:var(--sage)}
+.footer b{display:block;margin-bottom:6px;font-family:var(--serif);font-size:26px;font-weight:500;color:var(--lichen)}
 
-/* ===== Подвал сайта ===== */
-.footer{padding:20px;text-align:center;font-size:15px;color:var(--dark-green)}
+/* ===== Планшеты и телефоны ===== */
+@media(max-width:900px){
+  .cards{grid-template-columns:1fr}
+  .card:first-child{grid-row:auto;min-height:480px}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .facts div:nth-child(3){border-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid rgba(227,235,217,.18)}
+}
+@media(max-width:600px){
+  .header{border-radius:28px;padding:12px 16px}
+  .board li{grid-template-columns:40px 1fr auto;padding:14px 16px;font-size:16px}
+}
 
-/* ===== Адаптация под телефоны: уменьшаем шрифты и колонки ===== */
-@media(max-width:600px){.hero h1{font-size:34px}.card__title{font-size:19px}.card__text{font-size:17px}.board li{grid-template-columns:36px 1fr auto;font-size:17px}}
-
-/* ===== Отключаем анимации, если пользователь так настроил систему ===== */
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+/* ===== Отключаем анимации по настройке системы ===== */
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
