@@ -1,1 +1,133 @@
+:root {
+  --bg: #FCFCFC;
+  --green-bg: #D5F2B8;
+  --green-border: #8BC34A;
+  --cream: #FFF5D6;
+  --dark-green: #2E4A12;
+  --text: #222;
+}
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Patrick Hand", "Comic Sans MS", "Chalkboard SE", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page {
+  max-width: 1000px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--green-bg);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px;
+  padding: 14px 18px;
+  background: var(--cream);
+  border: 3px solid var(--green-border);
+  border-radius: 12px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.logo small {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav__link {
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--dark-green);
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.nav__link:hover {
+  opacity: 0.8;
+}
+
+/* Slogan */
+.slogan {
+  display: inline-block;
+  margin: 8px 16px 16px;
+  padding: 8px 16px;
+  background: var(--cream);
+  border: 3px solid var(--green-border);
+  border-radius: 10px;
+  font-size: 26px;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  padding: 8px 16px 32px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--cream);
+  border-radius: 12px;
+}
+
+.card__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #ddd;
+}
+
+.card__title {
+  font-size: 22px;
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+.card__text {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+/* Adaptive */
+@media (max-width: 600px) {
+  .slogan {
+    font-size: 20px;
+  }
+
+  .card__title {
+    font-size: 19px;
+  }
+
+  .card__text {
+    font-size: 17px;
+  }
+}
