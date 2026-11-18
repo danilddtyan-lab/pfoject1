@@ -1,5 +1,4 @@
 /* ===== 1. Settings. Leave empty to run in demo mode (data stays in this browser). ===== */
-const CONFIG = { SUPABASE_URL: '', SUPABASE_KEY: '' };
 const CONFIG = { SUPABASE_URL: 'https://xxxx.supabase.co', SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC' };
 /* ===== 2. Shared header + footer ===== */
 const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Top climbers'], ['add-peak.html', 'Log a peak']];
