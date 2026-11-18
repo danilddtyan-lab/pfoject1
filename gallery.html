@@ -1,119 +1,109 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <!-- Кодировка и масштаб для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery | Ala-archa nature park</title>
+  <meta name="description" content="Ала-Арча: природный парк в Кыргызстане. Маршруты, приюты и вершины, отметки восхождений и рейтинг альпинистов.">
+  <meta name="theme-color" content="#0C1B14">
+  <title>Галерея | Природный парк Ала-Арча</title>
 
-  <!-- Шрифты Google -->
+  <!-- Значок вкладки (встроен в код, поэтому нет лишнего запроса favicon.ico) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+  <!-- Шрифты Google: Cormorant Garamond для заголовков, Manrope для текста (есть кириллица) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Файл стилей -->
+  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="gallery">
+  <!-- Ссылка для клавиатуры: сразу к содержимому -->
+  <a class="skip" href="#main">Перейти к содержимому</a>
+
   <div class="page">
+    <!-- Шапка и меню: заполняются скриптом app.js (одинаковые на всех страницах) -->
+    <header class="header" id="site-header"></header>
 
-    <!-- Верхняя панель: логотип и меню -->
-    <header class="header" id="site-header">
-      <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-      <nav class="nav" aria-label="Main">
-        <a class="nav__link" href="index.html">Home</a>
-        <a class="nav__link" href="gallery.html" aria-current="page">Gallery</a>
-        <a class="nav__link" href="top.html">Leaderboard</a>
-        <a class="nav__link" href="add-peak.html">Log a peak</a>
-      </nav>
-    </header>
-
-    <!-- Основное содержимое -->
-    <main class="wrap">
-
+    <main class="wrap" id="main">
       <!-- Заголовок страницы и вступление -->
       <div class="page-head">
-        <h1 class="title">Gallery</h1>
-        <p class="lead">Thirty frames from the park, in three chapters. Tap any photo to see it larger.</p>
+        <h1 class="title">Галерея</h1>
+        <p class="lead">Тридцать кадров из парка в трёх главах. Нажмите на фото, чтобы увеличить.</p>
       </div>
 
-      <!-- Раздел 1: The gorge (абзац + 10 фото) -->
+      <!-- Глава 1: Ущелье (абзац и 10 фото; файлы images/gallery-1-01.jpg … gallery-1-10.jpg) -->
       <section class="g-section">
         <div class="g-head">
-          <h2>The gorge</h2>
-          <p>Where the walk begins: a river, pine forest and granite walls rising on both sides. Most visitors start here and many never want to leave.</p>
+          <h2>Ущелье</h2>
+          <p>Здесь начинается путь: река, хвойный лес и гранитные стены по обе стороны. Многие приезжают сюда на день, а остаются в памяти на годы.</p>
         </div>
         <div class="g-grid">
-          <button class="ph" type="button"><img src="images/gallery-1-01.jpg" alt="The gorge, photo 1" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-02.jpg" alt="The gorge, photo 2" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-03.jpg" alt="The gorge, photo 3" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-04.jpg" alt="The gorge, photo 4" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-05.jpg" alt="The gorge, photo 5" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-06.jpg" alt="The gorge, photo 6" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-07.jpg" alt="The gorge, photo 7" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-08.jpg" alt="The gorge, photo 8" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-09.jpg" alt="The gorge, photo 9" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-1-10.jpg" alt="The gorge, photo 10" loading="lazy"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-01.jpg" alt="Ущелье, фото 1" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-02.jpg" alt="Ущелье, фото 2" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-03.jpg" alt="Ущелье, фото 3" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-04.jpg" alt="Ущелье, фото 4" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-05.jpg" alt="Ущелье, фото 5" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-06.jpg" alt="Ущелье, фото 6" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-07.jpg" alt="Ущелье, фото 7" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-08.jpg" alt="Ущелье, фото 8" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-09.jpg" alt="Ущелье, фото 9" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-1-10.jpg" alt="Ущелье, фото 10" loading="lazy" decoding="async"></button>
         </div>
       </section>
 
-      <!-- Раздел 2: Huts and camps (абзац + 10 фото) -->
+      <!-- Глава 2: Приюты и лагеря (абзац и 10 фото; файлы images/gallery-2-01.jpg … gallery-2-10.jpg) -->
       <section class="g-section">
         <div class="g-head">
-          <h2>Huts and camps</h2>
-          <p>Warm beds, hot meals and long evenings above the tree line. A look at the places where climbers rest before the summit push.</p>
+          <h2>Приюты и лагеря</h2>
+          <p>Тёплые постели, горячая еда и долгие вечера выше границы леса. Места, где альпинисты отдыхают перед штурмом вершины.</p>
         </div>
         <div class="g-grid g-grid--alt">
-          <button class="ph" type="button"><img src="images/gallery-2-01.jpg" alt="Huts and camps, photo 1" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-02.jpg" alt="Huts and camps, photo 2" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-03.jpg" alt="Huts and camps, photo 3" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-04.jpg" alt="Huts and camps, photo 4" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-05.jpg" alt="Huts and camps, photo 5" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-06.jpg" alt="Huts and camps, photo 6" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-07.jpg" alt="Huts and camps, photo 7" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-08.jpg" alt="Huts and camps, photo 8" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-09.jpg" alt="Huts and camps, photo 9" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-2-10.jpg" alt="Huts and camps, photo 10" loading="lazy"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-01.jpg" alt="Приюты и лагеря, фото 1" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-02.jpg" alt="Приюты и лагеря, фото 2" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-03.jpg" alt="Приюты и лагеря, фото 3" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-04.jpg" alt="Приюты и лагеря, фото 4" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-05.jpg" alt="Приюты и лагеря, фото 5" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-06.jpg" alt="Приюты и лагеря, фото 6" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-07.jpg" alt="Приюты и лагеря, фото 7" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-08.jpg" alt="Приюты и лагеря, фото 8" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-09.jpg" alt="Приюты и лагеря, фото 9" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-2-10.jpg" alt="Приюты и лагеря, фото 10" loading="lazy" decoding="async"></button>
         </div>
       </section>
 
-      <!-- Раздел 3: Summits (абзац + 10 фото) -->
+      <!-- Глава 3: Вершины (абзац и 10 фото; файлы images/gallery-3-01.jpg … gallery-3-10.jpg) -->
       <section class="g-section">
         <div class="g-head">
-          <h2>Summits</h2>
-          <p>Ice, rock and thin air. Frames from the ridges and peaks of Ala-Archa, taken on the way up and from the top.</p>
+          <h2>Вершины</h2>
+          <p>Лёд, камень и разреженный воздух. Кадры с гребней и вершин Ала-Арчи: по пути наверх и с самой вершины.</p>
         </div>
         <div class="g-grid">
-          <button class="ph" type="button"><img src="images/gallery-3-01.jpg" alt="Summits, photo 1" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-02.jpg" alt="Summits, photo 2" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-03.jpg" alt="Summits, photo 3" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-04.jpg" alt="Summits, photo 4" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-05.jpg" alt="Summits, photo 5" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-06.jpg" alt="Summits, photo 6" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-07.jpg" alt="Summits, photo 7" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-08.jpg" alt="Summits, photo 8" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-09.jpg" alt="Summits, photo 9" loading="lazy"></button>
-          <button class="ph" type="button"><img src="images/gallery-3-10.jpg" alt="Summits, photo 10" loading="lazy"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-01.jpg" alt="Вершины, фото 1" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-02.jpg" alt="Вершины, фото 2" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-03.jpg" alt="Вершины, фото 3" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-04.jpg" alt="Вершины, фото 4" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-05.jpg" alt="Вершины, фото 5" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-06.jpg" alt="Вершины, фото 6" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-07.jpg" alt="Вершины, фото 7" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-08.jpg" alt="Вершины, фото 8" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-09.jpg" alt="Вершины, фото 9" loading="lazy" decoding="async"></button>
+          <button class="ph" type="button"><img src="images/gallery-3-10.jpg" alt="Вершины, фото 10" loading="lazy" decoding="async"></button>
         </div>
       </section>
 
-      <!-- Окно просмотра фото -->
-      <dialog id="viewer"><img src="" alt=""><p></p><button class="btn" type="button">Close</button></dialog>
+      <!-- Окно просмотра фото: открывается и закрывается скриптом app.js -->
+      <dialog id="viewer" aria-label="Просмотр фотографии"><img src="" alt=""><p></p><button class="btn" type="button">Закрыть</button></dialog>
     </main>
 
-    <!-- Подвал -->
-    <footer class="footer" id="site-footer"><b>Ala-Archa</b>Nature park, Kyrgyzstan</footer>
+    <!-- Подвал: заполняется скриптом app.js -->
+    <footer class="footer" id="site-footer"></footer>
   </div>
 
-  <!-- Просмотр фото: клик по снимку открывает окно, клик по фону или кнопке закрывает -->
-  <script>
-    const v=document.getElementById('viewer'),vi=v.querySelector('img'),vp=v.querySelector('p');
-    document.querySelectorAll('.ph').forEach(b=>b.addEventListener('click',()=>{
-      const im=b.querySelector('img');vi.src=im.src;vi.alt=im.alt;vp.textContent=im.alt;v.showModal();
-    }));
-    v.querySelector('button').addEventListener('click',()=>v.close());
-    v.addEventListener('click',e=>{if(e.target===v)v.close()});
-  </script>
+  <!-- Общий скрипт: шапка, подвал, работа с базой и логика страницы -->
+  <script src="app.js"></script>
 </body>
 </html>
