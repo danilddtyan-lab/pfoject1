@@ -1,4 +1,4 @@
-:root{--bg:#333333;--green-bg:#D5F2B8;--green-border:#8BC34A;--cream:#FFF5D6;--dark-green:#2E4A12;--text:#222;--font:"Agrave Pro",Georgia,serif}
+:root{--bg:#2E4A12;--green-bg:#D5F2B8;--green-border:#8BC34A;--cream:#FFF5D6;--dark-green:#2E4A12;--text:#222;--font:"Agrave Pro",Georgia,serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--font);color:var(--text);background:var(--green-bg);min-height:100svh}
