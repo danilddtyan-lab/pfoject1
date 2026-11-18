@@ -1,113 +1,177 @@
-/* ===== 1. Settings. Leave empty to run in demo mode (data stays in this browser). ===== */
-const CONFIG = { SUPABASE_URL: '', SUPABASE_KEY: '' };
-/* ===== 2. Shared header + footer ===== */
+/* ===== 1. Настройки Supabase ===== */
+// URL проекта и публичный publishable key из Supabase → Project Settings → API.
+// Publishable key допустимо использовать в браузере при правильно настроенных RLS-политиках.
+const CONFIG = {
+  SUPABASE_URL: 'https://gbvmbvylnrbtatnrjdsl.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
+};
+
+/* ===== 2. Общие шапка и подвал сайта ===== */
+// Ссылки навигации: адрес страницы и подпись ссылки.
 const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Top climbers'], ['add-peak.html', 'Log a peak']];
+// Получаем имя текущей страницы из адреса браузера.
 const here = location.pathname.split('/').pop() || 'index.html';
+// Заполняем шапку логотипом и меню; текущей ссылке добавляем aria-current.
 document.getElementById('site-header').innerHTML =
   `<a class="logo" href="index.html">Ala-archa <small>nature park</small></a>
    <nav class="nav" aria-label="Main">${NAV.map(([h, t]) =>
     `<a class="nav__link" href="${h}"${h === here ? ' aria-current="page"' : ''}>${t}</a>`).join('')}</nav>`;
+// Устанавливаем текст подвала.
 document.getElementById('site-footer').textContent = 'Ala-archa nature park';
 
-/* ===== 3. Data layer. Pages only call `store`, so switching to Supabase changes nothing else. ===== */
-const SAMPLE_PEAKS = [ // sample data: check heights and difficulty before publishing
+/* ===== 3. Данные и слой работы с хранилищем ===== */
+// Демонстрационные пики используются только если Supabase не настроен.
+const SAMPLE_PEAKS = [
   { id: 1, name: 'Semenov-Tian-Shansky Peak', height_m: 4895, difficulty: 3 },
   { id: 2, name: 'Korona Peak', height_m: 4860, difficulty: 4 },
   { id: 3, name: 'Free Korea Peak', height_m: 4740, difficulty: 3 },
   { id: 4, name: 'Uchitel Peak', height_m: 4527, difficulty: 2 },
   { id: 5, name: 'Ratsek Hut', height_m: 3370, difficulty: 1 }
 ];
+// Клиент Supabase будет создан после загрузки библиотеки.
 let sb = null;
+// Инициализируем клиент один раз и ждём завершения подключения перед запросами.
 const ready = (async () => {
-  if (!CONFIG.SUPABASE_URL) return;
-  await new Promise((ok, no) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js';
-    s.onload = ok; s.onerror = no; document.head.appendChild(s);
+  if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) {
+    throw new Error('Не заданы SUPABASE_URL или SUPABASE_KEY.');
+  }
+  // Загружаем официальный JavaScript-клиент Supabase из CDN.
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Не удалось загрузить клиент Supabase с CDN.'));
+    document.head.appendChild(script);
   });
+  // Создаём клиент для REST-запросов к Supabase.
   sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+  console.info('Клиент Supabase создан. Доступ к таблицам проверяется при запросе.');
 })();
+// Ключ хранения восхождений в localStorage (используется в локальном режиме).
 const LS = 'aa_ascents';
+// Методы чтения и записи данных.
 const store = {
+  // Загружает пики из таблицы peaks, сортируя по высоте по убыванию.
   async peaks() {
     await ready;
-    if (!sb) return SAMPLE_PEAKS;
     const { data, error } = await sb.from('peaks').select('*').order('height_m', { ascending: false });
-    if (error) throw error; return data;
+    if (error) throw error;
+    return data;
   },
+  // Загружает восхождения и связанные записи пиков.
   async ascents() {
     await ready;
-    if (!sb) return JSON.parse(localStorage.getItem(LS) || '[]')
-      .map(a => ({ ...a, peaks: SAMPLE_PEAKS.find(p => p.id === a.peak_id) }));
     const { data, error } = await sb.from('ascents').select('*, peaks(name,height_m,difficulty)');
-    if (error) throw error; return data;
+    if (error) throw error;
+    return data;
   },
-  async addAscent(a) {
+  // Добавляет восхождение в таблицу ascents.
+  async addAscent(ascent) {
     await ready;
-    if (!sb) { const all = JSON.parse(localStorage.getItem(LS) || '[]'); all.push(a); localStorage.setItem(LS, JSON.stringify(all)); return; }
-    const { error } = await sb.from('ascents').insert(a);
+    const { error } = await sb.from('ascents').insert(ascent);
     if (error) throw error;
   }
 };
-const points = p => Math.round(p.height_m / 100) + p.difficulty * 10;
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Рассчитывает очки за высоту и сложность пика.
+const points = peak => Math.round(peak.height_m / 100) + peak.difficulty * 10;
+// Экранирует спецсимволы HTML перед вставкой текста в разметку.
+const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
-/* ===== 4. Page logic ===== */
+/* ===== 4. Логика страниц ===== */
+// data-page в HTML определяет, какая логика страницы должна выполняться.
 const page = document.body.dataset.page;
 
+// Страница галереи.
 if (page === 'gallery') {
-  const PHOTOS = [ // add your files here: src, title, tag
+  // Список фотографий: файл, подпись, категория.
+  const PHOTOS = [
     { src: 'images/ratsek-hut.jpg', title: 'Ratsek Hut, 3,370 m', tag: 'Huts' },
     { src: 'images/korona-peak.jpg', title: 'Korona Peak', tag: 'Peaks' },
     { src: 'images/ala-archa-6.jpg', title: 'Ala-Archa gorge', tag: 'Gorge' }
   ];
-  const tags = ['All', ...new Set(PHOTOS.map(p => p.tag))];
+  // Категории фильтра: «All» и все уникальные категории фотографий.
+  const tags = ['All', ...new Set(PHOTOS.map(photo => photo.tag))];
+  // Находим элементы страницы.
   const grid = document.getElementById('gallery'), box = document.getElementById('filters'), dlg = document.getElementById('viewer');
+  // Перерисовывает фильтры и фотографии для выбранной категории.
   const draw = tag => {
-    box.innerHTML = tags.map(t => `<button aria-pressed="${t === tag}" data-t="${t}">${t}</button>`).join('');
-    grid.innerHTML = PHOTOS.filter(p => tag === 'All' || p.tag === tag)
-      .map(p => `<button data-s="${esc(p.src)}" data-c="${esc(p.title)}"><img src="${esc(p.src)}" alt="${esc(p.title)}" loading="lazy"></button>`).join('');
+    box.innerHTML = tags.map(item => `<button aria-pressed="${item === tag}" data-t="${item}">${item}</button>`).join('');
+    grid.innerHTML = PHOTOS.filter(photo => tag === 'All' || photo.tag === tag)
+      .map(photo => `<button data-s="${esc(photo.src)}" data-c="${esc(photo.title)}"><img src="${esc(photo.src)}" alt="${esc(photo.title)}" loading="lazy"></button>`).join('');
   };
-  box.onclick = e => e.target.dataset.t && draw(e.target.dataset.t);
-  grid.onclick = e => {
-    const b = e.target.closest('button'); if (!b) return;
-    dlg.querySelector('img').src = b.dataset.s; dlg.querySelector('img').alt = b.dataset.c;
-    dlg.querySelector('p').textContent = b.dataset.c; dlg.showModal();
+  // Переключает фотографии при выборе фильтра.
+  box.onclick = event => event.target.dataset.t && draw(event.target.dataset.t);
+  // Открывает нажатую фотографию в диалоговом окне.
+  grid.onclick = event => {
+    const button = event.target.closest('button');
+    if (!button) return;
+    dlg.querySelector('img').src = button.dataset.s;
+    dlg.querySelector('img').alt = button.dataset.c;
+    dlg.querySelector('p').textContent = button.dataset.c;
+    dlg.showModal();
   };
-  dlg.onclick = e => { if (e.target === dlg || e.target.matches('.btn')) dlg.close(); };
+  // Закрывает диалог при нажатии на фон или кнопку закрытия.
+  dlg.onclick = event => { if (event.target === dlg || event.target.matches('.btn')) dlg.close(); };
+  // При загрузке показывает все фотографии.
   draw('All');
 }
 
+// Страница таблицы лидеров.
 if (page === 'top') {
   const list = document.getElementById('board');
+  // Получаем восхождения из Supabase и группируем их по участникам.
   store.ascents().then(rows => {
-    const by = {};
-    rows.forEach(r => {
-      const k = r.climber_name.trim().toLowerCase();
-      const u = by[k] ||= { name: r.climber_name.trim(), n: 0, max: 0, pts: 0 };
-      u.n++; u.max = Math.max(u.max, r.peaks.height_m); u.pts += points(r.peaks);
+    const climbers = {};
+    rows.forEach(row => {
+      const key = row.climber_name.trim().toLowerCase();
+      const climber = climbers[key] ||= { name: row.climber_name.trim(), n: 0, max: 0, pts: 0 };
+      climber.n++;
+      climber.max = Math.max(climber.max, row.peaks.height_m);
+      climber.pts += points(row.peaks);
     });
-    const top = Object.values(by).sort((a, b) => b.pts - a.pts || b.max - a.max);
+    // Сортирует по сумме очков, затем по максимальной высоте.
+    const top = Object.values(climbers).sort((a, b) => b.pts - a.pts || b.max - a.max);
+    // Показывает рейтинг или сообщение, если восхождений ещё нет.
     list.innerHTML = top.length
-      ? top.map((u, i) => `<li><span class="rank">${i + 1}</span><span>${esc(u.name)}<small>${u.n} ascents, highest ${u.max} m</small></span><span class="pts">${u.pts}</span></li>`).join('')
+      ? top.map((climber, index) => `<li><span class="rank">${index + 1}</span><span>${esc(climber.name)}<small>${climber.n} ascents, highest ${climber.max} m</small></span><span class="pts">${climber.pts}</span></li>`).join('')
       : '<li class="empty">No ascents yet. <a href="add-peak.html">Log the first one.</a></li>';
-  }).catch(() => list.innerHTML = '<li class="empty">Could not load the list. Check the connection and reload.</li>');
+  }).catch(error => {
+    // Пишем подробности в консоль, чтобы можно было диагностировать подключение и RLS.
+    console.error('Ошибка загрузки таблицы лидеров из Supabase:', error);
+    list.innerHTML = '<li class="empty">Не удалось загрузить данные. Проверьте подключение и политики доступа Supabase.</li>';
+  });
 }
 
+// Страница добавления восхождения.
 if (page === 'add') {
-  const f = document.getElementById('ascent-form'), msg = document.getElementById('msg');
-  f.date.max = f.date.value = new Date().toISOString().slice(0, 10);
-  store.peaks().then(ps => {
-    f.peak.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
-      ps.map(p => `<option value="${p.id}" data-height-m="${p.height_m}">${esc(p.name)}, ${p.height_m} m</option>`).join('');
-  }).catch(() => {
-    f.peak.innerHTML = '<option value="" disabled selected>Could not load peaks</option>';
+  const form = document.getElementById('ascent-form'), msg = document.getElementById('msg');
+  // Запрещаем будущую дату и устанавливаем сегодняшнюю дату по умолчанию.
+  form.date.max = form.date.value = new Date().toISOString().slice(0, 10);
+  // Загружает пики из Supabase и добавляет название с высотой в выпадающий список.
+  store.peaks().then(peaks => {
+    form.peak.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
+      peaks.map(peak => `<option value="${peak.id}" data-height-m="${peak.height_m}">${esc(peak.name)}, ${peak.height_m} m</option>`).join('');
+  }).catch(error => {
+    // Выводим реальную ошибку (например, неверный ключ, таблица отсутствует или запрос запрещён RLS).
+    console.error('Ошибка загрузки пиков из Supabase:', error);
+    form.peak.innerHTML = '<option value="" disabled selected>Ошибка загрузки пиков — откройте консоль браузера</option>';
   });
-  f.onsubmit = async e => {
-    e.preventDefault(); msg.className = 'msg'; msg.textContent = 'Saving...';
+  // Обрабатывает отправку формы восхождения.
+  form.onsubmit = async event => {
+    event.preventDefault();
+    msg.className = 'msg';
+    msg.textContent = 'Saving...';
     try {
-      await store.addAscent({ climber_name: f.name.value.trim(), peak_id: +f.peak.value, climbed_on: f.date.value, note: f.note.value.trim() || null });
-      msg.innerHTML = 'Ascent saved. <a href="top.html">See the top list</a>'; f.reset(); f.date.value = f.date.max;
-    } catch (err) { msg.className = 'msg err'; msg.textContent = 'Could not save the ascent. Check the fields and try again.'; }
+      // Отправляет поля формы в таблицу ascents.
+      await store.addAscent({ climber_name: form.name.value.trim(), peak_id: Number(form.peak.value), climbed_on: form.date.value, note: form.note.value.trim() || null });
+      msg.innerHTML = 'Ascent saved. <a href="top.html">See the top list</a>';
+      form.reset();
+      form.date.value = form.date.max;
+    } catch (error) {
+      // Подробная ошибка отображается в консоли браузера.
+      console.error('Ошибка сохранения восхождения в Supabase:', error);
+      msg.className = 'msg err';
+      msg.textContent = 'Не удалось сохранить. Проверьте таблицы и политики доступа Supabase.';
+    }
   };
 }
