@@ -51,7 +51,7 @@ main{flex:1;padding-bottom:40px}
 
 /* ===== Главный экран (hero): фото на фоне + затемнение снизу для читаемости текста.
    Картинка меняется в url(...) в конце строки ===== */
-.hero{min-height:calc(100svh - 110px);display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:20px;padding:clamp(20px,5vw,64px);border-radius:16px;color:#fff;background:linear-gradient(to top,rgba(60,45,95,.75),rgba(60,45,95,.05) 60%),url("images/DJI_20260820125255_0337_D.jpg") center/cover no-repeat var(--dark-green)}
+.hero{min-height:calc(100svh - 110px);display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:20px;padding:clamp(20px,5vw,64px);border-radius:16px;color:#fff;background:linear-gradient(to top,rgba(60,45,95,.75),rgba(60,45,95,.05) 60%),url("images/images.jpg") center/cover no-repeat var(--dark-green)}
 
 /* ===== Крупный заголовок на главном экране ===== */
 .hero h1{max-width:18ch;font-size:clamp(34px,7vw,92px);line-height:1.05;font-weight:normal;text-shadow:0 2px 12px rgba(0,0,0,.3)}
