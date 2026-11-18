@@ -1,33 +1,26 @@
 /* ===== 1. Настройки Supabase ===== */
 // URL проекта и публичный publishable key из Supabase → Project Settings → API.
 // Publishable key допустимо использовать в браузере при правильно настроенных RLS-политиках.
+// ВАЖНО: secret key (sb_secret_...) сюда вставлять нельзя, он только для серверов.
 const CONFIG = {
-  SUPABASE_URL: 
-  SUPABASE_KEY: 
+  SUPABASE_URL: 'https://gbvmbvylnrbtatnrjdsl.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
 };
 
 /* ===== 2. Общие шапка и подвал сайта ===== */
 // Ссылки навигации: адрес страницы и подпись ссылки.
-const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Top climbers'], ['add-peak.html', 'Log a peak']];
+const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Leaderboard'], ['add-peak.html', 'Log a peak']];
 // Получаем имя текущей страницы из адреса браузера.
 const here = location.pathname.split('/').pop() || 'index.html';
 // Заполняем шапку логотипом и меню; текущей ссылке добавляем aria-current.
 document.getElementById('site-header').innerHTML =
-  `<a class="logo" href="index.html">Ala-archa <small>nature park</small></a>
+  `<a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
    <nav class="nav" aria-label="Main">${NAV.map(([h, t]) =>
     `<a class="nav__link" href="${h}"${h === here ? ' aria-current="page"' : ''}>${t}</a>`).join('')}</nav>`;
-// Устанавливаем текст подвала.
-document.getElementById('site-footer').textContent = 'Ala-archa nature park';
+// Устанавливаем содержимое подвала.
+document.getElementById('site-footer').innerHTML = '<b>Ala-Archa</b>Nature park, Kyrgyzstan';
 
 /* ===== 3. Данные и слой работы с хранилищем ===== */
-// Демонстрационные пики используются только если Supabase не настроен.
-const SAMPLE_PEAKS = [
-  { id: 1, name: 'Semenov-Tian-Shansky Peak', height_m: 4895, difficulty: 3 },
-  { id: 2, name: 'Korona Peak', height_m: 4860, difficulty: 4 },
-  { id: 3, name: 'Free Korea Peak', height_m: 4740, difficulty: 3 },
-  { id: 4, name: 'Uchitel Peak', height_m: 4527, difficulty: 2 },
-  { id: 5, name: 'Ratsek Hut', height_m: 3370, difficulty: 1 }
-];
 // Клиент Supabase будет создан после загрузки библиотеки.
 let sb = null;
 // Инициализируем клиент один раз и ждём завершения подключения перед запросами.
@@ -47,8 +40,6 @@ const ready = (async () => {
   sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
   console.info('Клиент Supabase создан. Доступ к таблицам проверяется при запросе.');
 })();
-// Ключ хранения восхождений в localStorage (используется в локальном режиме).
-const LS = 'aa_ascents';
 // Методы чтения и записи данных.
 const store = {
   // Загружает пики из таблицы peaks, сортируя по высоте по убыванию.
@@ -80,41 +71,6 @@ const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', 
 /* ===== 4. Логика страниц ===== */
 // data-page в HTML определяет, какая логика страницы должна выполняться.
 const page = document.body.dataset.page;
-
-// Страница галереи.
-if (page === 'gallery') {
-  // Список фотографий: файл, подпись, категория.
-  const PHOTOS = [
-    { src: 'images/ratsek-hut.jpg', title: 'Ratsek Hut, 3,370 m', tag: 'Huts' },
-    { src: 'images/korona-peak.jpg', title: 'Korona Peak', tag: 'Peaks' },
-    { src: 'images/ala-archa-6.jpg', title: 'Ala-Archa gorge', tag: 'Gorge' }
-  ];
-  // Категории фильтра: «All» и все уникальные категории фотографий.
-  const tags = ['All', ...new Set(PHOTOS.map(photo => photo.tag))];
-  // Находим элементы страницы.
-  const grid = document.getElementById('gallery'), box = document.getElementById('filters'), dlg = document.getElementById('viewer');
-  // Перерисовывает фильтры и фотографии для выбранной категории.
-  const draw = tag => {
-    box.innerHTML = tags.map(item => `<button aria-pressed="${item === tag}" data-t="${item}">${item}</button>`).join('');
-    grid.innerHTML = PHOTOS.filter(photo => tag === 'All' || photo.tag === tag)
-      .map(photo => `<button data-s="${esc(photo.src)}" data-c="${esc(photo.title)}"><img src="${esc(photo.src)}" alt="${esc(photo.title)}" loading="lazy"></button>`).join('');
-  };
-  // Переключает фотографии при выборе фильтра.
-  box.onclick = event => event.target.dataset.t && draw(event.target.dataset.t);
-  // Открывает нажатую фотографию в диалоговом окне.
-  grid.onclick = event => {
-    const button = event.target.closest('button');
-    if (!button) return;
-    dlg.querySelector('img').src = button.dataset.s;
-    dlg.querySelector('img').alt = button.dataset.c;
-    dlg.querySelector('p').textContent = button.dataset.c;
-    dlg.showModal();
-  };
-  // Закрывает диалог при нажатии на фон или кнопку закрытия.
-  dlg.onclick = event => { if (event.target === dlg || event.target.matches('.btn')) dlg.close(); };
-  // При загрузке показывает все фотографии.
-  draw('All');
-}
 
 // Страница таблицы лидеров.
 if (page === 'top') {
@@ -164,7 +120,7 @@ if (page === 'add') {
     try {
       // Отправляет поля формы в таблицу ascents.
       await store.addAscent({ climber_name: form.name.value.trim(), peak_id: Number(form.peak.value), climbed_on: form.date.value, note: form.note.value.trim() || null });
-      msg.innerHTML = 'Ascent saved. <a href="top.html">See the top list</a>';
+      msg.innerHTML = 'Ascent saved. <a href="top.html">See the leaderboard</a>';
       form.reset();
       form.date.value = form.date.max;
     } catch (error) {
