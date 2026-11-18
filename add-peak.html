@@ -1,54 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
+  <!-- Кодировка и масштаб для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Log a peak | Ala-Archa Nature Park</title>
+  <meta name="description" content="Ала-Арча: природный парк в Кыргызстане. Маршруты, приюты и вершины, отметки восхождений и рейтинг альпинистов.">
+  <meta name="theme-color" content="#0C1B14">
+  <title>Отметить вершину | Природный парк Ала-Арча</title>
+
+  <!-- Значок вкладки (встроен в код, поэтому нет лишнего запроса favicon.ico) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+  <!-- Шрифты Google: Cormorant Garamond для заголовков, Manrope для текста (есть кириллица) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="add">
-  <div class="page">
-    <header class="header" id="site-header">
-      <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-      <nav class="nav" aria-label="Main">
-        <a class="nav__link" href="index.html">Home</a>
-        <a class="nav__link" href="gallery.html">Gallery</a>
-        <a class="nav__link" href="top.html">Leaderboard</a>
-        <a class="nav__link" href="add-peak.html" aria-current="page">Log a peak</a>
-      </nav>
-    </header>
+  <!-- Ссылка для клавиатуры: сразу к содержимому -->
+  <a class="skip" href="#main">Перейти к содержимому</a>
 
-    <main class="wrap">
-      <h1 class="title">Log a peak</h1>
+  <div class="page">
+    <!-- Шапка и меню: заполняются скриптом app.js (одинаковые на всех страницах) -->
+    <header class="header" id="site-header"></header>
+
+    <main class="wrap" id="main">
+      <div class="page-head">
+        <h1 class="title">Отметить вершину</h1>
+        <p class="lead">Выберите вершину и дату, и восхождение попадёт в рейтинг.</p>
+      </div>
+
+      <!-- Форма: данные отправляет app.js (раздел «Отметить вершину») -->
       <form class="form" id="ascent-form">
-        <label for="climber-name">Your name
-          <input id="climber-name" name="name" required minlength="2" maxlength="40" autocomplete="name">
+        <label for="climber-name">Ваше имя
+          <input id="climber-name" name="name" required minlength="2" maxlength="40" autocomplete="name" placeholder="Например, Айбек">
         </label>
 
-        <label for="peak-select">Peak
-          <select id="peak-select" name="peak" required>
-            <option value="" disabled selected>Loading peaks...</option>
+        <label for="peak-select">Вершина
+          <select id="peak-select" name="peak" required disabled>
+            <option value="" disabled selected>Загрузка вершин…</option>
           </select>
         </label>
 
-        <label for="climb-date">Date of ascent
+        <label for="climb-date">Дата восхождения
           <input id="climb-date" type="date" name="date" required>
         </label>
 
-        <label for="climb-note">Note (route, weather, who you went with)
-          <textarea id="climb-note" name="note" rows="3" maxlength="500"></textarea>
+        <label for="climb-note">Заметка (маршрут, погода, с кем ходили)
+          <textarea id="climb-note" name="note" rows="3" maxlength="500" placeholder="Необязательно"></textarea>
         </label>
 
-        <button class="btn" type="submit">Save ascent</button>
+        <button class="btn" type="submit">Сохранить восхождение</button>
         <p class="msg" id="msg" role="status"></p>
       </form>
     </main>
 
-    <footer class="footer" id="site-footer"><b>Ala-Archa</b>Nature park, Kyrgyzstan</footer>
+    <!-- Подвал: заполняется скриптом app.js -->
+    <footer class="footer" id="site-footer"></footer>
   </div>
+
+  <!-- Общий скрипт: шапка, подвал, работа с базой и логика страницы -->
   <script src="app.js"></script>
 </body>
 </html>
