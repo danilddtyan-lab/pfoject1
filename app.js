@@ -2,8 +2,8 @@
 // URL проекта и публичный publishable key из Supabase → Project Settings → API.
 // Publishable key допустимо использовать в браузере при правильно настроенных RLS-политиках.
 const CONFIG = {
-  SUPABASE_URL: 'https://gbvmbvylnrbtatnrjdsl.supabase.co',
-  SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
+  SUPABASE_URL: 
+  SUPABASE_KEY: 
 };
 
 /* ===== 2. Общие шапка и подвал сайта ===== */
