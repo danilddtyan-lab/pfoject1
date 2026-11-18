@@ -1,133 +1,196 @@
 /* ===== 1. Настройки Supabase ===== */
-// URL проекта и публичный publishable key из Supabase → Project Settings → API.
-// Publishable key допустимо использовать в браузере при правильно настроенных RLS-политиках.
-// ВАЖНО: secret key (sb_secret_...) сюда вставлять нельзя, он только для серверов.
 const CONFIG = {
   SUPABASE_URL: 'https://gbvmbvylnrbtatnrjdsl.supabase.co',
   SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
 };
 
-/* ===== 2. Общие шапка и подвал сайта ===== */
-// Ссылки навигации: адрес страницы и подпись ссылки.
-const NAV = [['index.html', 'Home'], ['gallery.html', 'Gallery'], ['top.html', 'Leaderboard'], ['add-peak.html', 'Log a peak']];
-// Получаем имя текущей страницы из адреса браузера.
-const here = location.pathname.split('/').pop() || 'index.html';
-// Заполняем шапку логотипом и меню; текущей ссылке добавляем aria-current.
-document.getElementById('site-header').innerHTML =
-  `<a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
-   <nav class="nav" aria-label="Main">${NAV.map(([h, t]) =>
-    `<a class="nav__link" href="${h}"${h === here ? ' aria-current="page"' : ''}>${t}</a>`).join('')}</nav>`;
-// Устанавливаем содержимое подвала.
-document.getElementById('site-footer').innerHTML = '<b>Ala-Archa</b>Nature park, Kyrgyzstan';
+/* ===== 2. Общая шапка и подвал ===== */
+const NAV = [
+  ['index.html', 'Home'],
+  ['gallery.html', 'Gallery'],
+  ['top.html', 'Leaderboard'],
+  ['add-peak.html', 'Log a peak']
+];
 
-/* ===== 3. Данные и слой работы с хранилищем ===== */
-// Клиент Supabase будет создан после загрузки библиотеки.
+const here = location.pathname.split('/').pop() || 'index.html';
+const header = document.getElementById('site-header');
+const footer = document.getElementById('site-footer');
+
+if (header) {
+  header.innerHTML = `
+    <a class="logo" href="index.html">Ala-Archa <small>NATURE PARK</small></a>
+    <nav class="nav" aria-label="Main">
+      ${NAV.map(([href, title]) =>
+        `<a class="nav__link" href="${href}"${href === here ? ' aria-current="page"' : ''}>${title}</a>`
+      ).join('')}
+    </nav>`;
+}
+
+if (footer) {
+  footer.innerHTML = '<b>Ala-Archa</b>Nature park, Kyrgyzstan';
+}
+
+/* ===== 3. Работа с Supabase ===== */
 let sb = null;
-// Инициализируем клиент один раз и ждём завершения подключения перед запросами.
+
 const ready = (async () => {
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) {
-    throw new Error('Не заданы SUPABASE_URL или SUPABASE_KEY.');
+    throw new Error('SUPABASE_URL или SUPABASE_KEY не заданы.');
   }
-  // Загружаем официальный JavaScript-клиент Supabase из CDN.
-  await new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js';
-    script.onload = resolve;
-    script.onerror = () => reject(new Error('Не удалось загрузить клиент Supabase с CDN.'));
-    document.head.appendChild(script);
-  });
-  // Создаём клиент для REST-запросов к Supabase.
-  sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
-  console.info('Клиент Supabase создан. Доступ к таблицам проверяется при запросе.');
+
+  if (!window.supabase) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js';
+      script.onload = resolve;
+      script.onerror = () => reject(new Error('Не удалось загрузить Supabase client с CDN.'));
+      document.head.appendChild(script);
+    });
+  }
+
+  sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
 })();
-// Методы чтения и записи данных.
+
 const store = {
-  // Загружает пики из таблицы peaks, сортируя по высоте по убыванию.
   async peaks() {
     await ready;
-    const { data, error } = await sb.from('peaks').select('*').order('height_m', { ascending: false });
+    const { data, error } = await sb
+      .from('peaks')
+      .select('*')
+      .order('height_m', { ascending: false });
     if (error) throw error;
-    return data;
+    return data || [];
   },
-  // Загружает восхождения и связанные записи пиков.
+
   async ascents() {
     await ready;
-    const { data, error } = await sb.from('ascents').select('*, peaks(name,height_m,difficulty)');
+    const { data, error } = await sb
+      .from('ascents')
+      .select('*, peaks(name,height_m,difficulty)');
     if (error) throw error;
-    return data;
+    return data || [];
   },
-  // Добавляет восхождение в таблицу ascents.
+
   async addAscent(ascent) {
     await ready;
     const { error } = await sb.from('ascents').insert(ascent);
     if (error) throw error;
   }
 };
-// Рассчитывает очки за высоту и сложность пика.
-const points = peak => Math.round(peak.height_m / 100) + peak.difficulty * 10;
-// Экранирует спецсимволы HTML перед вставкой текста в разметку.
-const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+const points = peak => {
+  const height = Number(peak.height_m) || 0;
+  const difficulty = Number(peak.difficulty) || 0;
+  return Math.round(height / 100) + difficulty * 10;
+};
+
+const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[char]));
 
 /* ===== 4. Логика страниц ===== */
-// data-page в HTML определяет, какая логика страницы должна выполняться.
 const page = document.body.dataset.page;
 
-// Страница таблицы лидеров.
 if (page === 'top') {
   const list = document.getElementById('board');
-  // Получаем восхождения из Supabase и группируем их по участникам.
-  store.ascents().then(rows => {
-    const climbers = {};
-    rows.forEach(row => {
-      const key = row.climber_name.trim().toLowerCase();
-      const climber = climbers[key] ||= { name: row.climber_name.trim(), n: 0, max: 0, pts: 0 };
-      climber.n++;
-      climber.max = Math.max(climber.max, row.peaks.height_m);
-      climber.pts += points(row.peaks);
+
+  if (list) {
+    store.ascents().then(rows => {
+      const climbers = {};
+
+      rows.forEach(row => {
+        if (!row.climber_name || !row.peaks) return;
+
+        const name = String(row.climber_name).trim();
+        if (!name) return;
+
+        const key = name.toLowerCase();
+        const climber = climbers[key] ||= { name, n: 0, max: 0, pts: 0 };
+        const height = Number(row.peaks.height_m) || 0;
+
+        climber.n++;
+        climber.max = Math.max(climber.max, height);
+        climber.pts += points(row.peaks);
+      });
+
+      const top = Object.values(climbers)
+        .sort((a, b) => b.pts - a.pts || b.max - a.max || a.name.localeCompare(b.name));
+
+      list.innerHTML = top.length
+        ? top.map((climber, index) => `
+            <li>
+              <span class="rank">${index + 1}</span>
+              <span>${esc(climber.name)}<small>${climber.n} ascents, highest ${climber.max} m</small></span>
+              <span class="pts">${climber.pts} pts</span>
+            </li>`).join('')
+        : '<li class="empty">No ascents yet. <a href="add-peak.html">Log the first one.</a></li>';
+    }).catch(error => {
+      console.error('Ошибка загрузки таблицы лидеров из Supabase:', error);
+      list.innerHTML = '<li class="empty">Не удалось загрузить данные. Проверьте подключение и политики доступа Supabase.</li>';
     });
-    // Сортирует по сумме очков, затем по максимальной высоте.
-    const top = Object.values(climbers).sort((a, b) => b.pts - a.pts || b.max - a.max);
-    // Показывает рейтинг или сообщение, если восхождений ещё нет.
-    list.innerHTML = top.length
-      ? top.map((climber, index) => `<li><span class="rank">${index + 1}</span><span>${esc(climber.name)}<small>${climber.n} ascents, highest ${climber.max} m</small></span><span class="pts">${climber.pts}</span></li>`).join('')
-      : '<li class="empty">No ascents yet. <a href="add-peak.html">Log the first one.</a></li>';
-  }).catch(error => {
-    // Пишем подробности в консоль, чтобы можно было диагностировать подключение и RLS.
-    console.error('Ошибка загрузки таблицы лидеров из Supabase:', error);
-    list.innerHTML = '<li class="empty">Не удалось загрузить данные. Проверьте подключение и политики доступа Supabase.</li>';
-  });
+  }
 }
 
-// Страница добавления восхождения.
 if (page === 'add') {
-  const form = document.getElementById('ascent-form'), msg = document.getElementById('msg');
-  // Запрещаем будущую дату и устанавливаем сегодняшнюю дату по умолчанию.
-  form.date.max = form.date.value = new Date().toISOString().slice(0, 10);
-  // Загружает пики из Supabase и добавляет название с высотой в выпадающий список.
-  store.peaks().then(peaks => {
-    form.peak.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
-      peaks.map(peak => `<option value="${peak.id}" data-height-m="${peak.height_m}">${esc(peak.name)}, ${peak.height_m} m</option>`).join('');
-  }).catch(error => {
-    // Выводим реальную ошибку (например, неверный ключ, таблица отсутствует или запрос запрещён RLS).
-    console.error('Ошибка загрузки пиков из Supabase:', error);
-    form.peak.innerHTML = '<option value="" disabled selected>Ошибка загрузки пиков — откройте консоль браузера</option>';
-  });
-  // Обрабатывает отправку формы восхождения.
-  form.onsubmit = async event => {
-    event.preventDefault();
-    msg.className = 'msg';
-    msg.textContent = 'Saving...';
-    try {
-      // Отправляет поля формы в таблицу ascents.
-      await store.addAscent({ climber_name: form.name.value.trim(), peak_id: Number(form.peak.value), climbed_on: form.date.value, note: form.note.value.trim() || null });
-      msg.innerHTML = 'Ascent saved. <a href="top.html">See the leaderboard</a>';
-      form.reset();
-      form.date.value = form.date.max;
-    } catch (error) {
-      // Подробная ошибка отображается в консоли браузера.
-      console.error('Ошибка сохранения восхождения в Supabase:', error);
-      msg.className = 'msg err';
-      msg.textContent = 'Не удалось сохранить. Проверьте таблицы и политики доступа Supabase.';
+  const form = document.getElementById('ascent-form');
+  const msg = document.getElementById('msg');
+
+  if (form && msg) {
+    const nameInput = form.elements.name;
+    const peakSelect = form.elements.peak;
+    const dateInput = form.elements.date;
+
+    if (dateInput) {
+      const today = new Date();
+      const localToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      dateInput.max = localToday;
+      dateInput.value = localToday;
     }
-  };
+
+    store.peaks().then(peaks => {
+      peakSelect.innerHTML = '<option value="" disabled selected>Choose a peak</option>' +
+        peaks.map(peak =>
+          `<option value="${Number(peak.id)}">${esc(peak.name)}, ${esc(peak.height_m)} m</option>`
+        ).join('');
+
+      peakSelect.disabled = peaks.length === 0;
+    }).catch(error => {
+      console.error('Ошибка загрузки пиков из Supabase:', error);
+      peakSelect.innerHTML = '<option value="" disabled selected>Ошибка загрузки пиков</option>';
+      peakSelect.disabled = true;
+    });
+
+    form.onsubmit = async event => {
+      event.preventDefault();
+
+      if (!form.reportValidity()) return;
+
+      const peakId = Number(peakSelect.value);
+      if (!Number.isFinite(peakId) || peakId <= 0) {
+        msg.className = 'msg err';
+        msg.textContent = 'Выберите пик из списка.';
+        return;
+      }
+
+      msg.className = 'msg';
+      msg.textContent = 'Saving...';
+
+      try {
+        await store.addAscent({
+          climber_name: nameInput.value.trim(),
+          peak_id: peakId,
+          climbed_on: dateInput.value,
+          note: form.elements.note.value.trim() || null
+        });
+
+        msg.innerHTML = 'Ascent saved. <a href="top.html">See the leaderboard</a>';
+        form.reset();
+        if (dateInput) dateInput.value = dateInput.max;
+      } catch (error) {
+        console.error('Ошибка сохранения восхождения в Supabase:', error);
+        msg.className = 'msg err';
+        msg.textContent = 'Не удалось сохранить. Проверьте таблицы и политики доступа Supabase.';
+      }
+    };
+  }
 }
