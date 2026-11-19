@@ -1,81 +1,104 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <!-- Кодировка и масштаб для телефонов -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ала-Арча: природный парк в Кыргызстане. Маршруты, приюты и вершины, отметки восхождений и рейтинг альпинистов.">
+  <meta name="description" content="Горы Кыргызстана: ущелья, популярные маршруты, приюты и вершины. Отметки восхождений и рейтинг альпинистов.">
   <meta name="theme-color" content="#0C1B14">
-  <title>Главная | Природный парк Ала-Арча</title>
+  <title>Главная | Горы Кыргызстана</title>
 
-  <!-- Значок вкладки (встроен в код, поэтому нет лишнего запроса favicon.ico) -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E">
 
-  <!-- Шрифты Google: Cormorant Garamond для заголовков, Manrope для текста (есть кириллица) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="home">
-  <!-- Ссылка для клавиатуры: сразу к содержимому -->
   <a class="skip" href="#main">Перейти к содержимому</a>
 
   <div class="page">
-    <!-- Шапка и меню: заполняются скриптом app.js (одинаковые на всех страницах) -->
+    <!-- Шапка заполняется скриптом app.js -->
     <header class="header" id="site-header"></header>
 
-    <!-- Главный экран: фон-фото задаётся в style.css (правило .hero) -->
     <section class="hero">
-      <h1>Целый мир в одном ущелье</h1>
-      <p>Маршруты, приюты и вершины Ала-Арчи. Отмечайте восхождения и смотрите, кто забирается выше всех.</p>
+      <h1>Горы Кыргызстана</h1>
+      <p>Ущелья, маршруты, приюты и вершины. Отмечайте восхождения и смотрите, кто забирается выше всех.</p>
       <a class="btn" href="add-peak.html">Отметить вершину</a>
 
-      <!-- Полоса с ключевыми цифрами -->
+      <!-- Ключевые цифры по Ала-Арче: замените на общие по стране, если нужно -->
       <div class="facts">
         <div><b>4 895 м</b><span>Пик Семёнова-Тян-Шанского</span></div>
         <div><b>3 370 м</b><span>Приют Рацека</span></div>
-        <div><b>40 км</b><span>от Бишкека</span></div>
-        <div><b>1976</b><span>год основания парка</span></div>
+        <div><b>40 км</b><span>от Бишкека до Ала-Арчи</span></div>
+        <div><b>1976</b><span>год основания парка Ала-Арча</span></div>
       </div>
     </section>
 
-    <!-- Основное содержимое -->
     <main class="wrap" id="main">
-      <!-- Вступительная фраза -->
-      <p class="intro">Ледники, альпийские луга и гранитные стены: рядом со столицей и в то же время в другом мире.</p>
+      <p class="intro">От предгорий рядом с Бишкеком до ледников Тянь-Шаня: выберите ущелье и найдите свой маршрут.</p>
 
-      <!-- Раздел «Куда пойти» -->
-      <h2 class="title" id="routes">Куда пойти</h2>
+      <!-- Ущелья -->
+      <h2 class="title" id="gorges">Ущелья</h2>
+      <div class="gorges">
+        <a class="gorge" href="gorges/ala-archa.html">
+          <img class="gorge__img" src="images/ala-archa-6.jpg" alt="Ущелье Ала-Арча" loading="lazy" decoding="async">
+          <span class="gorge__name">Ала-Арча</span>
+          <span class="gorge__meta">40 км от Бишкека. Приют Рацека, ледники, вершины</span>
+        </a>
 
-      <!-- Три карточки: первая большая, две поменьше -->
-      <div class="cards">
-        <!-- Карточка 1: приют Рацека -->
-        <article class="card">
-          <img class="card__img" src="images/ratsek-hut.jpg" alt="Приют Рацека" loading="lazy" decoding="async">
-          <div><h3 class="card__title">Приют Рацека</h3>
-          <p class="card__text">Высота: 3 370 м. Отдых в горах: тёплая постель, горячая еда и тишина вершин за окном.</p></div>
-        </article>
-
-        <!-- Карточка 2: вершины Ала-Арчи -->
-        <article class="card">
-          <img class="card__img" src="images/korona-peak.jpg" alt="Вершины Ала-Арчи" loading="lazy" decoding="async">
-          <div><h3 class="card__title">Вершины Ала-Арчи</h3>
-          <p class="card__text">Высота: до 4 870 м. Поднимитесь выше облаков, где вас ждут вершины.</p></div>
-        </article>
-
-        <!-- Карточка 3: комфорт среди природы -->
-        <article class="card">
-          <img class="card__img" src="images/ala-archa-6.jpg" alt="Комфорт среди дикой природы" loading="lazy" decoding="async">
-          <div><h3 class="card__title">Комфорт среди дикой природы</h3>
-          <p class="card__text">Тёплая постель, горячая еда и тишина Ала-Арчи за окном.</p></div>
-        </article>
+        <!-- Ущелья без готовой страницы: не ссылки, с пометкой «Скоро» -->
+        <div class="gorge gorge--soon">
+          <span class="gorge__name">Ак-Сай</span>
+          <span class="gorge__meta">Скоро</span>
+        </div>
+        <div class="gorge gorge--soon">
+          <span class="gorge__name">Аламедин</span>
+          <span class="gorge__meta">Скоро</span>
+        </div>
+        <div class="gorge gorge--soon">
+          <span class="gorge__name">Алтын-Арашан</span>
+          <span class="gorge__meta">Скоро</span>
+        </div>
+        <div class="gorge gorge--soon">
+          <span class="gorge__name">Каракол</span>
+          <span class="gorge__meta">Скоро</span>
+        </div>
       </div>
 
-      <!-- Блок с призывом добавить вершину -->
+      <!-- Популярные маршруты -->
+      <h2 class="title" id="routes">Популярные маршруты</h2>
+      <div class="cards">
+        <article class="card">
+          <img class="card__img" src="images/ratsek-hut.jpg" alt="Приют Рацека" loading="lazy" decoding="async">
+          <div>
+            <h3 class="card__title"><a href="routes/ratsek-hut.html">Приют Рацека</a></h3>
+            <p class="card__text">Ала-Арча. Высота: 3 370 м. Тёплая постель, горячая еда и тишина вершин за окном.</p>
+            <p class="tags"><span class="tag tag--mid">Средний</span><span class="tag">1-2 дня</span></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="card__img" src="images/korona-peak.jpg" alt="Вершины Ала-Арчи" loading="lazy" decoding="async">
+          <div>
+            <h3 class="card__title"><a href="routes/peaks.html">Вершины Ала-Арчи</a></h3>
+            <p class="card__text">Ала-Арча. Высота: до 4 870 м. Поднимитесь выше облаков, где вас ждут вершины.</p>
+            <p class="tags"><span class="tag tag--hard">Сложный</span><span class="tag">С ночёвкой</span></p>
+          </div>
+        </article>
+
+        <article class="card">
+          <img class="card__img" src="images/ala-archa-6.jpg" alt="Прогулка по долине Ала-Арчи" loading="lazy" decoding="async">
+          <div>
+            <h3 class="card__title"><a href="routes/valley-walk.html">Прогулка по долине</a></h3>
+            <p class="card__text">Ала-Арча. Спокойный маршрут для семей и новичков среди хвойного леса и горной реки.</p>
+            <p class="tags"><span class="tag tag--easy">Лёгкий</span><span class="tag">За день</span></p>
+          </div>
+        </article>
+      </div>
+      <p class="more"><a href="routes.html">Все маршруты</a></p>
+
       <section class="cta">
         <div>
           <h2>Покорили вершину?</h2>
@@ -85,11 +108,9 @@
       </section>
     </main>
 
-    <!-- Подвал: заполняется скриптом app.js -->
     <footer class="footer" id="site-footer"></footer>
   </div>
 
-  <!-- Общий скрипт: шапка, подвал, работа с базой и логика страницы -->
   <script src="app.js"></script>
 </body>
 </html>
