@@ -1,3 +1,4 @@
+
 /* ===js для базы данных и одинаковых элементов страниц== */
 
 /* ===== 1. Настройки ===== */
@@ -8,9 +9,25 @@ const CONFIG = {
   SUPABASE_KEY: 'sb_publishable_26fxCLV3FFrVWLFdEOAXyw_UvIdakhC'
 };
 
-// Пункты меню: [значение data-page, адрес страницы, подпись]. По data-page подсвечивается текущая страница.
+// Пункты меню. Обычный пункт: [data-page, адрес страницы, подпись]. По data-page подсвечивается текущая страница.
+// Выпадающий список: ['group', подпись, [[адрес, подпись], ...]]. Адрес null = страница скоро (не ссылка).
+// Пустая строка '' вместо пункта рисует разделитель.
 const NAV = [
   ['home', 'index.html', 'Главная'],
+  ['group', 'Ущелья', [
+    ['gorges/ala-archa.html', 'Ала-Арча'],
+    [null, 'Ак-Сай (скоро)'],
+    [null, 'Аламедин (скоро)'],
+    [null, 'Алтын-Арашан (скоро)'],
+    [null, 'Каракол (скоро)']
+  ]],
+  ['group', 'Маршруты', [
+    ['routes/ratsek-hut.html', 'Приют Рацека'],
+    ['routes/peaks.html', 'Вершины Ала-Арчи'],
+    ['routes/valley-walk.html', 'Прогулка по долине'],
+    '',
+    ['routes.html', 'Все маршруты']
+  ]],
   ['gallery', 'gallery.html', 'Галерея'],
   ['top', 'top.html', 'Рейтинг'],
   ['add', 'add-peak.html', 'Отметить вершину']
@@ -20,18 +37,40 @@ const NAV = [
 const page = document.body.dataset.page;
 
 /* ===== 2. Шапка и подвал ===== */
-// Вставляем логотип и меню; у текущей страницы ставим aria-current (стиль подсветки и подсказка для экранных читалок).
+// Один пункт меню: обычная ссылка (у текущей страницы ставим aria-current) или выпадающий список.
+const navItem = ([key, a, b]) => {
+  if (key !== 'group') return `<a class="nav__link" href="${a}"${key === page ? ' aria-current="page"' : ''}>${b}</a>`;
+  const links = b.map(item => item === '' ? '<hr>'
+    : item[0] ? `<a href="${item[0]}">${item[1]}</a>` : `<span>${item[1]}</span>`).join('');
+  return `<div class="nav__group">
+      <button class="nav__link nav__btn" type="button" aria-expanded="false" aria-haspopup="true">${a}</button>
+      <div class="nav__menu">${links}</div>
+    </div>`;
+};
+
+// Вставляем логотип и меню.
 const header = document.getElementById('site-header');
 if (header) {
   header.innerHTML = `
-    <a class="logo" href="index.html">Ала-Арча <small>ПРИРОДНЫЙ ПАРК</small></a>
-    <nav class="nav" aria-label="Главное меню">
-      ${NAV.map(([key, href, title]) =>
-        `<a class="nav__link" href="${href}"${key === page ? ' aria-current="page"' : ''}>${title}</a>`).join('')}
-    </nav>`;
+    <a class="logo" href="index.html">Горы Кыргызстана <small>ПУТЕВОДИТЕЛЬ</small></a>
+    <nav class="nav" aria-label="Главное меню">${NAV.map(navItem).join('')}</nav>`;
+
+  // Выпадающие списки открываются кликом (телефоны, клавиатура); на компьютере ещё и по наведению.
+  const groups = header.querySelectorAll('.nav__group');
+  const closeAll = () => groups.forEach(g => {
+    g.classList.remove('is-open');
+    g.querySelector('.nav__btn').setAttribute('aria-expanded', 'false');
+  });
+  groups.forEach(g => g.querySelector('.nav__btn').addEventListener('click', e => {
+    const wasOpen = g.classList.contains('is-open');
+    closeAll();
+    if (!wasOpen) { g.classList.add('is-open'); e.currentTarget.setAttribute('aria-expanded', 'true'); }
+  }));
+  document.addEventListener('click', e => { if (!e.target.closest('.nav__group')) closeAll(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
 }
 const footer = document.getElementById('site-footer');
-if (footer) footer.innerHTML = '<b>Ала-Арча</b>Природный парк, Кыргызстан';
+if (footer) footer.innerHTML = '<b>Горы Кыргызстана</b>Ущелья, маршруты и вершины Кыргызстана';
 
 /* ===== 3. Вспомогательные функции ===== */
 // Экранирует спецсимволы, чтобы текст из базы не превратился в HTML-код (защита от XSS).
