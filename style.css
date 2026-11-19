@@ -1,4 +1,5 @@
 
+
 /* ===== Палитра, шрифты и радиус скругления. Цвета сайта меняются только здесь ===== */
 :root{--spruce:#0C1B14;--forest:#17362A;--moss:#4F7352;--sage:#A9C0A0;--lichen:#E3EBD9;--mist:#F5F8F1;--brass:#C2A55A;--text:#16241C;--serif:"Cormorant Garamond","Playfair Display",Georgia,serif;--sans:"Manrope","Helvetica Neue",Arial,sans-serif;--r:22px}
 
@@ -32,15 +33,28 @@ main{flex:1;padding-bottom:clamp(48px,8vw,110px)}
    min-height резервирует место, пока скрипт app.js вставляет меню ===== */
 .header{position:sticky;top:12px;z-index:20;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;min-height:66px;margin:12px clamp(10px,2.5vw,36px) 0;padding:10px 12px 10px 24px;background:rgba(12,27,20,.78);border:1px solid rgba(227,235,217,.16);border-radius:999px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 
-/* ===== Логотип и подпись «природный парк» ===== */
+/* ===== Логотип и подпись «путеводитель» ===== */
 .logo{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1}
 .logo small{margin-left:10px;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:.14em;color:var(--sage)}
 
 /* ===== Меню: кнопки-капсулы, активная страница подсвечена светлым ===== */
-.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
 .nav__link{padding:9px 20px;border-radius:999px;font-size:15px;font-weight:500;text-decoration:none;color:var(--lichen);transition:background .25s,color .25s}
 .nav__link:hover{background:rgba(227,235,217,.14)}
 .nav__link[aria-current="page"]{background:var(--lichen);color:var(--forest)}
+
+/* ===== Выпадающие списки меню: «Ущелья» и «Маршруты» ===== */
+.nav__group{position:relative}
+.nav__btn{font:inherit;font-size:15px;font-weight:500;background:none;border:0;cursor:pointer}
+.nav__btn::after{content:"";display:inline-block;width:6px;height:6px;margin:0 0 3px 8px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.nav__menu{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:30;min-width:240px;padding:8px;background:rgba(12,27,20,.96);border:1px solid rgba(227,235,217,.16);border-radius:20px;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.nav__menu::before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+.nav__group.is-open .nav__menu,.nav__group:focus-within .nav__menu{display:block}
+@media(hover:hover){.nav__group:hover .nav__menu{display:block}}
+.nav__menu a,.nav__menu span{display:block;padding:10px 16px;border-radius:12px;font-size:15px;text-decoration:none;color:var(--lichen)}
+.nav__menu a:hover{background:rgba(227,235,217,.14)}
+.nav__menu span{color:var(--sage);opacity:.6}
+.nav__menu hr{height:1px;margin:6px 8px;border:0;background:rgba(169,192,160,.3)}
 
 /* ===== Главный экран: фото на весь экран, заходит под шапку (отрицательный margin-top) ===== */
 .hero{position:relative;min-height:calc(100svh - 24px);margin-top:-84px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:26px;padding:clamp(24px,5vw,72px);background:linear-gradient(90deg,rgba(12,27,20,.64),rgba(12,27,20,.08)),url("images/ala-archa-gorge.jpg") center/cover no-repeat;border-radius:0 0 36px 36px}
@@ -70,6 +84,18 @@ main{flex:1;padding-bottom:clamp(48px,8vw,110px)}
 .title{display:flex;align-items:center;gap:22px;margin:0 0 28px;font-family:var(--serif);font-size:clamp(34px,4.4vw,60px);font-weight:500;color:var(--mist)}
 .title::after{content:"";flex:1;height:1px;background:rgba(169,192,160,.4)}
 
+/* ===== Ущелья на главной: первая карточка с фото шире, остальные «Скоро» ===== */
+.gorges{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:clamp(48px,7vw,100px)}
+.gorge{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;min-height:220px;padding:22px;border-radius:var(--r);text-decoration:none;color:var(--mist)}
+a.gorge:first-child{grid-column:span 2;min-height:300px}
+.gorge__img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+a.gorge:hover .gorge__img{transform:scale(1.05)}
+a.gorge::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(12,27,20,.9))}
+.gorge__name{font-family:var(--serif);font-size:clamp(28px,3vw,38px);font-weight:500;line-height:1.05}
+.gorge__meta{font-size:14px;color:var(--lichen)}
+.gorge--soon{justify-content:center;background:rgba(245,248,241,.06);border:1px dashed rgba(169,192,160,.45)}
+.gorge--soon .gorge__meta{color:var(--sage)}
+
 /* ===== Карточки на главной: первая большая слева на две строки ===== */
 .cards{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:20px}
 .card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:360px;border-radius:var(--r);overflow:hidden;color:var(--mist);isolation:isolate}
@@ -83,7 +109,18 @@ main{flex:1;padding-bottom:clamp(48px,8vw,110px)}
 .card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 35%,rgba(12,27,20,.9))}
 .card>div{padding:clamp(20px,2.6vw,36px)}
 .card__title{font-family:var(--serif);font-size:clamp(28px,3vw,42px);font-weight:500;line-height:1.05;margin-bottom:8px}
+.card__title a{text-decoration:none}
+.card__title a::after{content:"";position:absolute;inset:0}
 .card__text{max-width:44ch;font-size:15px;color:var(--lichen)}
+
+/* ===== Метки маршрута (сложность, длительность) и ссылка «Все маршруты» ===== */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{padding:3px 12px;border:1px solid rgba(227,235,217,.5);border-radius:999px;font-size:13px;color:var(--lichen)}
+.tag--easy{border-color:#8fc79f;color:#b7e2c3}
+.tag--mid{border-color:var(--brass);color:#e3cd8f}
+.tag--hard{border-color:#e08a7a;color:#f2b3a7}
+.more{margin-top:24px;text-align:right}
+.more a{font-weight:700;color:var(--brass)}
 
 /* ===== Тёмный блок с призывом к действию (главная и рейтинг) ===== */
 .cta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;margin:clamp(56px,8vw,110px) 0 0;padding:clamp(36px,6vw,88px);border-radius:32px;border:1px solid rgba(169,192,160,.25);background:radial-gradient(120% 140% at 85% 0%,rgba(37,82,61,.92) 0%,rgba(12,27,20,.96) 58%,#0C1B14 100%)}
@@ -172,6 +209,10 @@ dialog p{margin:0 6px 12px;font-family:var(--serif);font-size:22px}
   .logo small{display:none}
   .nav{width:100%;justify-content:space-between}
   .nav__link{padding:8px 10px;font-size:13px}
+  .nav__btn{font-size:13px}
+  .nav__group{position:static}
+  .nav__menu{left:12px;right:12px;top:calc(100% + 8px)}
+  a.gorge:first-child{grid-column:auto}
   .cta{align-items:flex-start;flex-direction:column}
   .board li{grid-template-columns:40px 1fr auto;padding:14px 16px;font-size:16px}
   .board .pts{font-size:22px}
