@@ -1,3 +1,241 @@
 
-/* ===== Отступ перед подвалом, чтобы он не соприкасался с блоком над ним ===== */
-.footer{margin-top:32px}
+/* ===== Палитра, шрифты и радиус скругления. Цвета сайта меняются только здесь ===== */
+/* Светлая спокойная схема: все поверхности сплошные, без прозрачности и размытия */
+:root{
+  --bg:#F3F6F1;          /* фон страниц */
+  --surface:#FFFFFF;     /* карточки, шапка, меню */
+  --text:#1C2A23;        /* основной текст */
+  --muted:#5A6B62;       /* второстепенный текст */
+  --line:#D5DFD2;        /* линии и рамки */
+  --green:#2E6B4E;       /* кнопки, активный пункт меню */
+  --green-hover:#245840; /* кнопка при наведении */
+  --green-dark:#1B3A2C;  /* заголовки, подвал, тёмные блоки */
+  --green-soft:#E3EDE5;  /* светло-зелёные плашки */
+  --gold:#A87F2A;        /* места в рейтинге и ссылки-акценты */
+  --serif:"Cormorant Garamond","Playfair Display",Georgia,serif;
+  --sans:"Manrope","Helvetica Neue",Arial,sans-serif;
+  --r:22px;
+}
+
+/* ===== Сброс отступов; плавная прокрутка к якорям с запасом под липкую шапку ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+
+/* ===== Основа страницы: светлый фон и тёмный текст ===== */
+body{font-family:var(--sans);color:var(--text);background:var(--bg);min-height:100svh;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ===== Базовые элементы: картинки не выходят за блок, ссылки наследуют цвет ===== */
+img{display:block;max-width:100%}
+a{color:inherit}
+
+/* ===== Рамка фокуса для навигации с клавиатуры (доступность) ===== */
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+
+/* ===== Ссылка «Перейти к содержимому»: видна только при фокусе (для клавиатуры и экранных читалок) ===== */
+.skip{position:absolute;left:12px;top:-64px;z-index:50;padding:10px 18px;border-radius:999px;background:var(--green);color:#fff;font-weight:700;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ===== Каркас: шапка сверху, контент растягивается, подвал прижат вниз ===== */
+.page{min-height:100svh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:1480px;margin:0 auto;padding:0 clamp(14px,3vw,48px)}
+main{flex:1;padding-bottom:clamp(48px,8vw,110px)}
+
+/* ===== Шапка: белая капсула с тонкой рамкой, остаётся на экране при прокрутке.
+   min-height резервирует место, пока скрипт app.js вставляет меню ===== */
+.header{position:sticky;top:12px;z-index:20;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;min-height:66px;margin:12px clamp(10px,2.5vw,36px) 0;padding:10px 12px 10px 24px;background:var(--surface);border:1px solid var(--line);border-radius:999px;box-shadow:0 4px 16px rgba(28,42,35,.08)}
+
+/* ===== Логотип и подпись «путеводитель» ===== */
+.logo{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;color:var(--green-dark)}
+.logo small{margin-left:10px;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:.14em;color:var(--muted)}
+
+/* ===== Меню: кнопки-капсулы, активная страница залита зелёным ===== */
+.nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.nav__link{padding:9px 20px;border-radius:999px;font-size:15px;font-weight:500;text-decoration:none;color:var(--text);transition:background .2s,color .2s}
+.nav__link:hover{background:var(--green-soft)}
+.nav__link[aria-current="page"]{background:var(--green);color:#fff}
+
+/* ===== Выпадающие списки меню: «Ущелья» и «Маршруты» ===== */
+.nav__group{position:relative}
+.nav__btn{font:inherit;font-size:15px;font-weight:500;background:none;border:0;cursor:pointer}
+.nav__btn::after{content:"";display:inline-block;width:6px;height:6px;margin:0 0 3px 8px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.nav__menu{display:none;position:absolute;top:calc(100% + 10px);right:0;z-index:30;min-width:240px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 28px rgba(28,42,35,.14)}
+.nav__menu::before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+.nav__group.is-open .nav__menu,.nav__group:focus-within .nav__menu{display:block}
+@media(hover:hover){.nav__group:hover .nav__menu{display:block}}
+.nav__menu a,.nav__menu span{display:block;padding:10px 16px;border-radius:12px;font-size:15px;text-decoration:none;color:var(--text)}
+.nav__menu a:hover{background:var(--green-soft)}
+.nav__menu span{color:var(--muted);opacity:.75}
+.nav__menu hr{height:1px;margin:6px 8px;border:0;background:var(--line)}
+
+/* ===== Главный экран: фото на весь экран, заходит под шапку (отрицательный margin-top).
+   Поверх фото простое тёмное затемнение, чтобы белый текст читался ===== */
+.hero{position:relative;color:#fff;min-height:calc(100svh - 24px);margin-top:-84px;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;gap:26px;padding:clamp(24px,5vw,72px);background:linear-gradient(90deg,rgba(14,30,22,.72),rgba(14,30,22,.22)),url("images/ala-archa-gorge.jpg") center/cover no-repeat var(--green-dark);border-radius:0 0 36px 36px}
+.hero h1{max-width:15ch;font-family:var(--serif);font-size:clamp(46px,9vw,136px);font-weight:500;font-style:italic;line-height:.95;letter-spacing:-.02em}
+.hero p{max-width:46ch;font-size:clamp(16px,1.6vw,20px);color:#E8EFE6}
+
+/* ===== Плавное появление элементов hero (отключается настройкой «уменьшить движение») ===== */
+.hero>*{animation:rise 1s cubic-bezier(.2,.7,.2,1) both}
+.hero>:nth-child(2){animation-delay:.15s}
+.hero>:nth-child(3){animation-delay:.3s}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}}
+
+/* ===== Кнопка (зелёная); disabled — пока идёт сохранение формы ===== */
+.btn{display:inline-block;padding:15px 34px;border-radius:999px;background:var(--green);color:#fff;font:inherit;font-size:16px;font-weight:700;text-decoration:none;border:0;cursor:pointer;transition:background .2s,transform .2s}
+.btn:hover{background:var(--green-hover);transform:translateY(-2px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+
+/* ===== Полоса с цифрами внизу hero (белая плашка, 4 колонки) ===== */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);width:100%;margin-top:18px;background:var(--surface);color:var(--text);border-radius:18px}
+.facts div{padding:20px 26px;border-left:1px solid var(--line)}
+.facts div:first-child{border-left:0}
+.facts b{display:block;font-family:var(--serif);font-size:clamp(28px,3.4vw,46px);font-weight:500;line-height:1.1;color:var(--green-dark)}
+.facts span{font-size:14px;color:var(--muted)}
+
+/* ===== Вступительная фраза и заголовок раздела (с тонкой линией справа) ===== */
+.intro{max-width:980px;margin:clamp(56px,9vw,130px) auto;text-align:center;font-family:var(--serif);font-size:clamp(26px,3.6vw,48px);line-height:1.25;color:var(--green-dark)}
+.title{display:flex;align-items:center;gap:22px;margin:0 0 28px;font-family:var(--serif);font-size:clamp(34px,4.4vw,60px);font-weight:500;color:var(--green-dark)}
+.title::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ===== Ущелья на главной: первая карточка с фото шире, остальные «Скоро» ===== */
+.gorges{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:clamp(48px,7vw,100px)}
+.gorge{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;min-height:220px;padding:22px;border-radius:var(--r);text-decoration:none;color:var(--text)}
+a.gorge{color:#fff}
+a.gorge:first-child{grid-column:span 2;min-height:300px}
+.gorge__img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+a.gorge:hover .gorge__img{transform:scale(1.05)}
+a.gorge::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(14,30,22,.85))}
+.gorge__name{font-family:var(--serif);font-size:clamp(28px,3vw,38px);font-weight:500;line-height:1.05}
+.gorge__meta{font-size:14px;color:#E3EDE5}
+.gorge--soon{justify-content:center;background:var(--surface);border:1px dashed #B5C5B3}
+.gorge--soon .gorge__name{color:var(--green-dark)}
+.gorge--soon .gorge__meta{color:var(--muted)}
+
+/* ===== Карточки на главной: первая большая слева на две строки ===== */
+.cards{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:20px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:360px;border-radius:var(--r);overflow:hidden;color:#fff;isolation:isolate}
+.card:first-child{grid-row:span 2;min-height:740px}
+
+/* ===== Фото карточки лежит на заднем плане и медленно приближается при наведении ===== */
+.card__img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.card:hover .card__img{transform:scale(1.05)}
+
+/* ===== Затемнение под текстом карточки и сам текст ===== */
+.card::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 35%,rgba(14,30,22,.88))}
+.card>div{padding:clamp(20px,2.6vw,36px)}
+.card__title{font-family:var(--serif);font-size:clamp(28px,3vw,42px);font-weight:500;line-height:1.05;margin-bottom:8px}
+.card__title a{text-decoration:none}
+.card__title a::after{content:"";position:absolute;inset:0}
+.card__text{max-width:44ch;font-size:15px;color:#E3EDE5}
+
+/* ===== Метки маршрута (сложность, длительность) и ссылка «Все маршруты» ===== */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{padding:3px 12px;border:1px solid rgba(255,255,255,.55);border-radius:999px;font-size:13px;color:#fff}
+.tag--easy{border-color:#8fc79f;color:#b7e2c3}
+.tag--mid{border-color:#e0c070;color:#efd592}
+.tag--hard{border-color:#e08a7a;color:#f2b3a7}
+.more{margin-top:24px;text-align:right}
+.more a{font-weight:700;color:var(--green)}
+
+/* ===== Тёмно-зелёный блок с призывом к действию (главная и рейтинг) ===== */
+.cta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;margin:clamp(56px,8vw,110px) 0 0;padding:clamp(36px,6vw,88px);border-radius:32px;background:var(--green-dark);color:#fff}
+.cta h2{max-width:16ch;font-family:var(--serif);font-size:clamp(36px,5vw,68px);font-weight:500;font-style:italic;line-height:1}
+.cta p{max-width:38ch;margin-top:14px;color:#C5D7CA}
+.cta .btn{background:#fff;color:var(--green-dark)}
+.cta .btn:hover{background:var(--green-soft)}
+
+/* ===== Внутренние страницы: заголовок и вступление ===== */
+.page-head{padding:clamp(32px,6vw,72px) 0 24px}
+.lead{max-width:70ch;color:var(--muted);font-size:18px}
+
+/* ===== Галерея: раздел = заголовок слева + абзац справа + сетка из 10 фото ===== */
+.g-section{margin-top:48px}
+.g-head{display:grid;grid-template-columns:minmax(180px,.35fr) 1fr;gap:24px;margin-bottom:18px;align-items:end}
+.g-head h2{font-family:var(--serif);font-size:42px;font-weight:500;color:var(--green-dark)}
+.g-head p{color:var(--muted)}
+
+/* ===== Сетка фото: строки фиксированной высоты, ячейки заполняют их целиком ===== */
+.g-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:clamp(160px,18vw,260px);gap:14px}
+.g-grid--alt{grid-template-columns:repeat(5,1fr)}
+
+/* ===== Фото-кнопка: по клику открывается просмотр ===== */
+.ph{display:block;width:100%;height:100%;padding:0;border:0;border-radius:18px;overflow:hidden;cursor:zoom-in;background:var(--green-soft)}
+.ph img{width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.ph:hover img{transform:scale(1.04)}
+
+/* ===== Если файла фото нет: вместо значка ошибки показываем светло-зелёную плитку ===== */
+.ph--missing{cursor:default;background:var(--green-soft)}
+.ph--missing img{display:none}
+
+/* ===== Окно просмотра фото (белая плашка поверх затемнённого фона) ===== */
+dialog{color:var(--text);margin:auto;max-width:min(94vw,1200px);border:0;border-radius:24px;background:var(--surface);padding:14px}
+dialog::backdrop{background:rgba(14,30,22,.85)}
+dialog img{max-height:78svh;margin:0 auto 12px;border-radius:14px}
+dialog p{margin:0 6px 12px;font-family:var(--serif);font-size:22px}
+
+/* ===== Рейтинг: три плашки с примером подсчёта очков ===== */
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.rules div{padding:18px 22px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.rules b{display:block;font-family:var(--serif);font-size:30px;color:var(--gold)}
+.rules span{font-size:14px;color:var(--muted)}
+
+/* ===== Рейтинг: строка = место, имя с подписью, очки. Первые три места тёмно-зелёные ===== */
+.board{list-style:none;display:grid;gap:10px}
+.board li{color:var(--text);display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:14px;padding:16px 24px;background:var(--surface);border:1px solid var(--line);border-radius:18px;font-size:18px}
+.board .rank{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--green)}
+.board li:nth-child(-n+3){background:var(--green-dark);border-color:var(--green-dark);color:#fff}
+.board li:nth-child(-n+3) .rank{color:#E3C27A}
+.board small{display:block;font-size:14px;font-weight:400;opacity:.7}
+.board .pts{font-family:var(--serif);font-size:32px;font-weight:600;text-align:right;line-height:1.1}
+
+/* ===== Сообщение вместо списка («загрузка», «пусто», «ошибка»): обычный блок, а не сетка ===== */
+.empty,.board li.empty{display:block;color:var(--text);padding:28px;background:var(--green-soft);border:0;border-radius:var(--r);font-size:18px}
+
+/* ===== Форма добавления восхождения (белая карточка) ===== */
+.form{color:var(--text);display:grid;gap:16px;max-width:660px;padding:clamp(22px,4vw,40px);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 8px 24px rgba(28,42,35,.08)}
+.form label{display:grid;gap:6px;font-size:15px;font-weight:600;color:var(--green-dark)}
+.form input,.form select,.form textarea{width:100%;padding:13px 16px;border:1px solid #B5C5B3;border-radius:12px;background:var(--bg);font:inherit;font-size:16px;font-weight:400;color:var(--text)}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--green);border-color:transparent}
+.form textarea{resize:vertical}
+
+/* ===== Сообщение под формой: успех (зелёный) или ошибка (красный) ===== */
+.msg{min-height:1.4em;font-size:16px;color:var(--green)}
+.msg.err{color:#a3200f}
+
+/* ===== Подвал ===== */
+.footer{padding:44px 20px;text-align:center;font-size:14px;letter-spacing:.04em;background:var(--green-dark);color:#C5D7CA}
+.footer b{display:block;margin-bottom:6px;font-family:var(--serif);font-size:26px;font-weight:500;color:#fff}
+
+/* ===== Компьютер: в сетке из трёх колонок первое и последнее фото занимают две ячейки,
+   чтобы все 10 фото складывались в ровные строки без пустого места ===== */
+@media(min-width:901px){.g-grid:not(.g-grid--alt) .ph:first-child,.g-grid:not(.g-grid--alt) .ph:last-child{grid-column:span 2}}
+
+/* ===== Планшеты: карточки в одну колонку, галерея в две ===== */
+@media(max-width:900px){
+  .cards{grid-template-columns:1fr}
+  .card:first-child{grid-row:auto;min-height:480px}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .facts div:nth-child(3){border-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid var(--line)}
+  .g-grid,.g-grid--alt{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ===== Телефоны: компактное меню, одна колонка ===== */
+@media(max-width:600px){
+  .header{border-radius:28px;padding:12px 16px}
+  .logo small{display:none}
+  .nav{width:100%;justify-content:space-between}
+  .nav__link{padding:8px 10px;font-size:13px}
+  .nav__btn{font-size:13px}
+  .nav__group{position:static}
+  .nav__menu{left:12px;right:12px;top:calc(100% + 8px)}
+  a.gorge:first-child{grid-column:auto}
+  .cta{align-items:flex-start;flex-direction:column}
+  .board li{grid-template-columns:40px 1fr auto;padding:14px 16px;font-size:16px}
+  .board .pts{font-size:22px}
+  .rules{grid-template-columns:1fr}
+  .g-head{grid-template-columns:1fr}
+  .g-grid,.g-grid--alt{grid-template-columns:1fr;grid-auto-rows:62vw}
+}
+
+/* ===== Отключаем анимации, если пользователь так настроил систему ===== */
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
